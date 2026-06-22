@@ -9,7 +9,7 @@ const SYNC_QUEUE_KEY = "elmasa_pending_sync_queue";
 
 // Default System Configuration
 const defaultSettings = {
-  webAppUrl: "", // Leave blank to boot into offline Mock Mode
+  webAppUrl: "https://script.google.com/macros/s/AKfycbx8274_a2d78fn7NhnnM1Q6EwarBKvvR_YD6zkpzoSPlKW4PUi5RtNXnDVondUnuuIg/exec",
   businessName: "الماسة للستائر والديكور",
   address: "القاهرة، مصر",
   phone: "+201018907086",
@@ -93,7 +93,12 @@ class ApiService {
     const data = localStorage.getItem(API_CONFIG_KEY);
     if (data) {
       try {
-        return JSON.parse(data);
+        const parsed = JSON.parse(data);
+        if (!parsed.webAppUrl) {
+          parsed.webAppUrl = defaultSettings.webAppUrl;
+          localStorage.setItem(API_CONFIG_KEY, JSON.stringify(parsed));
+        }
+        return parsed;
       } catch (e) {
         return defaultSettings;
       }
