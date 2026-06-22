@@ -162,7 +162,6 @@ window.renderOrders = function() {
           <div class="text-[10px] text-slate-400 font-mono">${o["Order Date"]}</div>
         </td>
         <td class="py-3 px-6 text-right text-slate-500 dark:text-slate-400 font-mono">${o["Installation Date"] || "-"}</td>
-        <td class="py-3 px-6 text-right font-medium text-slate-700 dark:text-slate-300">${escapeHtml(o["Assigned Technician"] || "-")}</td>
         <td class="py-3 px-6 text-center">
           <span class="inline-flex items-center px-2 py-0.5 rounded border text-[10px] font-bold ${badgeClass}">
             ${translateStatus(o["Order Status"])}
@@ -249,7 +248,7 @@ function renderInstallationSchedule() {
           </div>
           <div>
             <h4 class="text-sm font-bold text-slate-900 dark:text-slate-100">${escapeHtml(custName)}</h4>
-            <p class="text-xs text-slate-500 dark:text-slate-400 font-mono">${o["Installation Date"]} | الفني: ${escapeHtml(o["Assigned Technician"] || "غير محدد")}</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-mono">تاريخ التركيب: ${o["Installation Date"]}</p>
           </div>
         </div>
         
@@ -427,7 +426,8 @@ window.openOrderModal = function(orderId = null) {
       document.getElementById("order-date").value = o["Order Date"];
       document.getElementById("order-delivery-date").value = o["Delivery Date"] || "";
       document.getElementById("order-installation-date").value = o["Installation Date"] || "";
-      document.getElementById("order-technician-select").value = o["Assigned Technician"] || "";
+      const techSelect = document.getElementById("order-technician-select");
+      if (techSelect) techSelect.value = o["Assigned Technician"] || "";
       document.getElementById("order-status-select").value = o["Order Status"];
       
       document.getElementById("order-sewing-cost").value = 0;
@@ -782,7 +782,7 @@ async function handleOrderSubmit(e) {
   const orderDate = document.getElementById("order-date").value;
   const deliveryDate = document.getElementById("order-delivery-date").value;
   const installDate = document.getElementById("order-installation-date").value;
-  const tech = document.getElementById("order-technician-select").value;
+  const tech = document.getElementById("order-technician-select")?.value || "";
   const status = document.getElementById("order-status-select").value;
   const notes = document.getElementById("order-notes").value.trim();
 

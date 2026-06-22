@@ -371,7 +371,6 @@
                     <th class="py-3 px-6">رقم الطلب</th>
                     <th class="py-3 px-6">العميل والتاريخ</th>
                     <th class="py-3 px-6">تاريخ التركيب</th>
-                    <th class="py-3 px-6">الفني المسؤول</th>
                     <th class="py-3 px-6 text-center">حالة الطلب</th>
                     <th class="py-3 px-6 text-left">التكلفة المالية</th>
                     <th class="py-3 px-6 text-center">خيارات</th>
@@ -684,7 +683,6 @@
             <button id="report-tab-profit" class="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">تقرير الأرباح (P&L)</button>
             <button id="report-tab-customer" class="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">تقرير حسابات العملاء</button>
             <button id="report-tab-inventory" class="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">تقرير جرد وحالة المخازن</button>
-            <button id="report-tab-technician" class="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">تقرير الفنيين</button>
             <button id="report-tab-danger" class="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 shadow-sm hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all mr-auto">المنطقة الخطرة (Danger Zone)</button>
           </div>
 
@@ -858,32 +856,6 @@
                   </tbody>
                 </table>
               </div>
-            </div>
-          </div>
-
-          <!-- E. Technician report -->
-          <div id="report-sec-technician" class="space-y-4 hidden">
-            <div class="flex justify-between items-center">
-              <h3 class="text-sm font-bold text-slate-900 dark:text-white">كفاءة وإنتاجية الفنيين وقيمة التركيبات المسندة</h3>
-              <button id="report-technician-csv" class="flex items-center space-x-reverse space-x-1.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50">
-                <i data-lucide="download" class="w-4 h-4 text-slate-500"></i>
-                <span>تصدير تقرير الفنيين Excel CSV</span>
-              </button>
-            </div>
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
-              <table class="w-full text-right text-xs">
-                <thead>
-                  <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-bold">
-                    <th class="py-2.5 px-4">اسم الفني</th>
-                    <th class="py-2.5 px-4 text-center">التركيبات المكتملة</th>
-                    <th class="py-2.5 px-4 text-center">التركيبات المعلقة والمجدولة</th>
-                    <th class="py-2.5 px-4 text-left">إجمالي حجم أعمال الطلبيات</th>
-                  </tr>
-                </thead>
-                <tbody id="rep-tech-tbody" class="divide-y divide-slate-100 dark:divide-slate-800">
-                  <!-- JS Populated -->
-                </tbody>
-              </table>
             </div>
           </div>
 
@@ -1164,13 +1136,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-slate-100 dark:border-slate-800 pt-3">
-          <div>
-            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">الفني المكلف بالتركيب</label>
-            <select id="order-technician-select" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
-              <!-- Technicians -->
-            </select>
-          </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-100 dark:border-slate-800 pt-3">
           <div>
             <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">حالة الطلبية *</label>
             <select id="order-status-select" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
