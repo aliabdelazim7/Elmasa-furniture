@@ -238,6 +238,7 @@ function initGlobalEvents() {
       localStorage.setItem("elmasa_session_active", "true");
       localStorage.setItem("elmasa_demo_session", "true");
       api.isMockMode = true; // force mock mode immediately
+      api.resetToDemoDatabase(); // Reset to rich Arabic sample database for demo mode
       showToast("تم الدخول في وضع التجربة بنجاح (قاعدة بيانات محلية آمنة)", "success");
       initAuth();
       startActivityTracker();

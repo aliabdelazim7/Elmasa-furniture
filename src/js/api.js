@@ -15,31 +15,36 @@ const defaultSettings = {
   address: "الدقهليه - المنصوره - مركز تمي الامديد - ظفر",
   phone: "+20 10 07036248",
   currency: "EGP",
-  adminEmail: "elmasa_admin_secure@elmasa.com",
-  adminPassword: "ElmasaAdminSecure2026!#"
+  adminEmail: "elmasa_admin_secure@elmasa.com"
 };
 
 // Initial Realistic Curtain Workshop Demo Database (Arabic localized)
 const demoDatabase = {
   Customers: [
     { "Customer ID": "CUST-1001", "Full Name": "أحمد رأفت الشافعي", "Phone Number": "01001234567", "Secondary Phone": "01122334455", "Address": "شقة 4، عمارة 12، شارع التسعين، التجمع الخامس", "Notes": "العميل يفضل تركيب الحلقات المخفية ويريد ألوان هادئة", "Created Date": "2026-06-10" },
-    { "Customer ID": "CUST-1002", "Full Name": "أ. ميار محمود صبري", "Phone Number": "01234567890", "Secondary Phone": "", "Address": "فيلا 3، كمبوند الياسمين، الشيخ زايد", "Notes": "طلب أقمشة قطيفة عازلة للضوء (Blackout)", "Created Date": "2026-06-15" }
+    { "Customer ID": "CUST-1002", "Full Name": "أ. ميار محمود صبري", "Phone Number": "01234567890", "Secondary Phone": "", "Address": "فيلا 3، كمبوند الياسمين، الشيخ زايد", "Notes": "طلب أقمشة قطيفة عازلة للضوء (Blackout)", "Created Date": "2026-06-15" },
+    { "Customer ID": "CUST-1003", "Full Name": "المهندس كريم عبد العزيز", "Phone Number": "01011223344", "Secondary Phone": "01288997766", "Address": "شقة 8، كمبوند ماونتن فيو، التجمع الخامس", "Notes": "مهندس ديكور يتعامل معنا بصفة مستمرة للفلل والشبابيك الكبيرة", "Created Date": "2026-06-18" },
+    { "Customer ID": "CUST-1004", "Full Name": "الحاج طارق أبو العلا", "Phone Number": "01144556677", "Secondary Phone": "", "Address": "فيلا 14، الحي الدبلوماسي، مدينة الشروق", "Notes": "يفضل الستائر الكلاسيكية الفخمة ذات البرقع والبلتكانات الخشبية المذهبة", "Created Date": "2026-06-20" }
   ],
   Orders: [
     { "Order ID": "ORD-5001", "Customer ID": "CUST-1001", "Order Date": "2026-06-10", "Delivery Date": "2026-06-25", "Installation Date": "2026-06-26", "Assigned Technician": "الأسطى شريف عبد الله", "Order Status": "Sewing In Progress", "Total Cost": 4560, "Paid Amount": 2500, "Remaining Amount": 2060, "Notes": "تم استلام القماش وجاري التفصيل بالورشة" },
-    { "Order ID": "ORD-5002", "Customer ID": "CUST-1002", "Order Date": "2026-06-15", "Delivery Date": "2026-06-28", "Installation Date": "2026-06-29", "Assigned Technician": "الأسطى محمد جابر", "Order Status": "Measurements Taken", "Total Cost": 12800, "Paid Amount": 6000, "Remaining Amount": 6800, "Notes": "تم رفع المقاسات وتأكيد الألوان مع العميل" }
+    { "Order ID": "ORD-5002", "Customer ID": "CUST-1002", "Order Date": "2026-06-15", "Delivery Date": "2026-06-28", "Installation Date": "2026-06-29", "Assigned Technician": "الأسطى محمد جابر", "Order Status": "Ready For Installation", "Total Cost": 12800, "Paid Amount": 12800, "Remaining Amount": 0, "Notes": "تم الانتهاء من الخياطة بالكامل وجاري انتظار موعد التركيب المتفق عليه" },
+    { "Order ID": "ORD-5003", "Customer ID": "CUST-1003", "Order Date": "2026-06-18", "Delivery Date": "2026-07-05", "Installation Date": "2026-07-06", "Assigned Technician": "الأسطى هاني رمزي", "Order Status": "Measurements Taken", "Total Cost": 8450, "Paid Amount": 4000, "Remaining Amount": 4450, "Notes": "تم رفع المقاسات وتأكيد الألوان مع العميل" },
+    { "Order ID": "ORD-5004", "Customer ID": "CUST-1004", "Order Date": "2026-06-20", "Delivery Date": "2026-07-10", "Installation Date": "2026-07-12", "Assigned Technician": "الأسطى شريف عبد الله", "Order Status": "Quotation", "Total Cost": 25400, "Paid Amount": 0, "Remaining Amount": 25400, "Notes": "عرض سعر مبدئي معلق لحين دفع العربون وتأكيد الخامات" }
   ],
   Rooms: [
     { "Room ID": "RM-201", "Order ID": "ORD-5001", "Customer ID": "CUST-1001", "Room Name": "غرفة المعيشة (Living Room)", "Width": 3.5, "Height": 2.8, "Curtain Type": "ستارة حلقات على مواسير", "Fabric Type": "كتان تركي بيج", "Color": "بيج فاتح", "Quantity": 2 },
     { "Room ID": "RM-202", "Order ID": "ORD-5001", "Customer ID": "CUST-1001", "Room Name": "غرفة النوم الرئيسية", "Width": 2.9, "Height": 2.7, "Curtain Type": "ستارة شيفون مخفي", "Fabric Type": "شيفون أبيض ناعم", "Color": "أوف وايت", "Quantity": 1 },
-    { "Room ID": "RM-203", "Order ID": "ORD-5002", "Customer ID": "CUST-1002", "Room Name": "الريسيبشن الكبير", "Width": 5.2, "Height": 3.0, "Curtain Type": "ستارة بيلتكانة خشبية", "Fabric Type": "قطيفة كحلي وبلاك أوت", "Color": "كحلي * رمادي", "Quantity": 3 }
+    { "Room ID": "RM-203", "Order ID": "ORD-5002", "Customer ID": "CUST-1002", "Room Name": "الريسيبشن الكبير", "Width": 5.2, "Height": 3.0, "Curtain Type": "ستارة بيلتكانة خشبية", "Fabric Type": "قطيفة كحلي وبلاك أوت", "Color": "كحلي * رمادي", "Quantity": 3 },
+    { "Room ID": "RM-204", "Order ID": "ORD-5003", "Customer ID": "CUST-1003", "Room Name": "غرفة المكتب", "Width": 2.8, "Height": 2.7, "Curtain Type": "ستارة حلقات حديثة", "Fabric Type": "كتان تركي بيج", "Color": "بيج", "Quantity": 1 },
+    { "Room ID": "RM-205", "Order ID": "ORD-5004", "Customer ID": "CUST-1004", "Room Name": "الصالون الكلاسيكي", "Width": 6.0, "Height": 3.2, "Curtain Type": "برقع كلاسيكي فخم", "Fabric Type": "قطيفة كحلي كوري عريض", "Color": "ذهبي وبني كلاسيك", "Quantity": 2 }
   ],
   InventoryItems: [
     { "Item ID": "ITEM-101", "Item Name": "قماش كتان تركي بيج", "Item Category": "Fabric", "Unit": "Meter", "Purchase Price": 120, "Selling Price": 180, "Quantity Available": 120, "Minimum Quantity Alert": 20, "Supplier": "الشركة المصرية للأقمشة", "Barcode": "6221109012345" },
-    { "Item ID": "ITEM-102", "Item Name": "قماش قطيفة كحلي كوري عريض", "Item Category": "Fabric", "Unit": "Meter", "Purchase Price": 170, "Selling Price": 250, "Quantity Available": 15, "Minimum Quantity Alert": 15, "Supplier": "مورد أقمشة التوفيق", "Barcode": "6221109012369" },
+    { "Item ID": "ITEM-102", "Item Name": "قماش قطيفة كحلي كوري عريض", "Item Category": "Fabric", "Unit": "Meter", "Purchase Price": 170, "Selling Price": 250, "Quantity Available": 12, "Minimum Quantity Alert": 15, "Supplier": "مورد أقمشة التوفيق", "Barcode": "6221109012369" },
     { "Item ID": "ITEM-103", "Item Name": "شيفون أبيض تركي ناعم", "Item Category": "Fabric", "Unit": "Meter", "Purchase Price": 50, "Selling Price": 80, "Quantity Available": 200, "Minimum Quantity Alert": 30, "Supplier": "مستورد أقمشة الأزهر", "Barcode": "6221109012383" },
     { "Item ID": "ITEM-201", "Item Name": "شريط ستائر 4 فتلة عريض", "Item Category": "Accessories", "Unit": "Meter", "Purchase Price": 8, "Selling Price": 15, "Quantity Available": 280, "Minimum Quantity Alert": 50, "Supplier": "مورد خردوات الموسكي", "Barcode": "20100050" },
-    { "Item ID": "ITEM-202", "Item Name": "حلقات ستارة ذهبي بلاستيك", "Item Category": "Accessories", "Unit": "Piece", "Purchase Price": 1.5, "Selling Price": 3, "Quantity Available": 450, "Minimum Quantity Alert": 100, "Supplier": "مورد خردوات الموسكي", "Barcode": "20100067" },
+    { "Item ID": "ITEM-202", "Item Name": "حلقات ستارة ذهبي بلاستيك", "Item Category": "Accessories", "Unit": "Piece", "Purchase Price": 1.5, "Selling Price": 3, "Quantity Available": 45, "Minimum Quantity Alert": 100, "Supplier": "مورد خردوات الموسكي", "Barcode": "20100067" },
     { "Item ID": "ITEM-301", "Item Name": "مواسير ستائر حديد ذهبي 2 متر", "Item Category": "Hardware", "Unit": "Piece", "Purchase Price": 70, "Selling Price": 120, "Quantity Available": 18, "Minimum Quantity Alert": 5, "Supplier": "مؤسسة الحديد والصلب للديكور", "Barcode": "30100099" },
     { "Item ID": "ITEM-302", "Item Name": "فيشر ومسامير علبة 100 حبة", "Item Category": "Hardware", "Unit": "Box", "Purchase Price": 25, "Selling Price": 45, "Quantity Available": 2, "Minimum Quantity Alert": 5, "Supplier": "أدوات السبتية", "Barcode": "30100112" },
     { "Item ID": "ITEM-401", "Item Name": "أجر تفصيل وخياطة عادي (متر طولي)", "Item Category": "Services", "Unit": "Meter", "Purchase Price": 0, "Selling Price": 30, "Quantity Available": 9999, "Minimum Quantity Alert": 0, "Supplier": "داخلي للورشة", "Barcode": "" },
@@ -49,23 +54,33 @@ const demoDatabase = {
     { "Material ID": "MAT-801", "Order ID": "ORD-5001", "Item ID": "ITEM-101", "Quantity Used": 15, "Unit Price": 180, "Total Price": 2700 },
     { "Material ID": "MAT-802", "Order ID": "ORD-5001", "Item ID": "ITEM-201", "Quantity Used": 15, "Unit Price": 15, "Total Price": 225 },
     { "Material ID": "MAT-803", "Order ID": "ORD-5001", "Item ID": "ITEM-202", "Quantity Used": 45, "Unit Price": 3, "Total Price": 135 },
-    { "Material ID": "MAT-804", "Order ID": "ORD-5001", "Item ID": "ITEM-401", "Quantity Used": 15, "Unit Price": 30, "Total Price": 450 }
+    { "Material ID": "MAT-804", "Order ID": "ORD-5001", "Item ID": "ITEM-401", "Quantity Used": 15, "Unit Price": 30, "Total Price": 450 },
+    { "Material ID": "MAT-805", "Order ID": "ORD-5002", "Item ID": "ITEM-102", "Quantity Used": 30, "Unit Price": 250, "Total Price": 7500 },
+    { "Material ID": "MAT-806", "Order ID": "ORD-5002", "Item ID": "ITEM-103", "Quantity Used": 30, "Unit Price": 80, "Total Price": 2400 },
+    { "Material ID": "MAT-807", "Order ID": "ORD-5002", "Item ID": "ITEM-201", "Quantity Used": 60, "Unit Price": 15, "Total Price": 900 }
   ],
   Payments: [
     { "Payment ID": "PAY-901", "Order ID": "ORD-5001", "Amount": 2500, "Payment Method": "InstaPay", "Date": "2026-06-10" },
-    { "Payment ID": "PAY-902", "Order ID": "ORD-5002", "Amount": 6000, "Payment Method": "Vodafone Cash", "Date": "2026-06-15" }
+    { "Payment ID": "PAY-902", "Order ID": "ORD-5002", "Amount": 6000, "Payment Method": "Vodafone Cash", "Date": "2026-06-15" },
+    { "Payment ID": "PAY-903", "Order ID": "ORD-5002", "Amount": 6800, "Payment Method": "Bank Transfer", "Date": "2026-06-20" },
+    { "Payment ID": "PAY-904", "Order ID": "ORD-5003", "Amount": 4000, "Payment Method": "Cash", "Date": "2026-06-19" }
   ],
   Expenses: [
     { "Expense ID": "EXP-301", "Expense Name": "شراء بنزين لسيارة التوصيل", "Category": "Transportation", "Amount": 200, "Date": "2026-06-12" },
-    { "Expense ID": "EXP-302", "Expense Name": "فاتورة كهرباء الورشة لشهر مايو", "Category": "Electricity", "Amount": 750, "Date": "2026-06-15" }
+    { "Expense ID": "EXP-302", "Expense Name": "فاتورة كهرباء الورشة لشهر مايو", "Category": "Electricity", "Amount": 750, "Date": "2026-06-15" },
+    { "Expense ID": "EXP-303", "Expense Name": "إيجار مقر معرض الستائر الشهري", "Category": "Rent", "Amount": 5000, "Date": "2026-06-01" },
+    { "Expense ID": "EXP-304", "Expense Name": "صيانة عاجلة لماكينة الأوفر بالورشة", "Category": "Maintenance", "Amount": 450, "Date": "2026-06-19" }
   ],
   Technicians: [
-    { "Technician Name": "الأسطى شريف عبد الله", "Phone Number": "01009876543", "Notes": "متخصص في تركيب المواسير الحديثة والبيلتكانات" },
-    { "Technician Name": "الأسطى محمد جابر", "Phone Number": "01223459876", "Notes": "متخصص في تفصيل البراقع والشيفونات المعقدة" }
+    { "Technician Name": "الأسطى شريف عبد الله", "Phone Number": "01009876543", "Notes": "متخصص في تركيب المواسير الحديثة والبيلتكانات والديكورات المعلقة" },
+    { "Technician Name": "الأسطى محمد جابر", "Phone Number": "01223459876", "Notes": "متخصص في تفصيل البراقع والشيفونات والستائر المعقدة" },
+    { "Technician Name": "الأسطى هاني رمزي", "Phone Number": "01556677889", "Notes": "فني تركيبات وتنسيق ألوان الموقع، يمتاز بالدقة والسرعة" }
   ],
   StockMovements: [
     { "Movement ID": "MOV-1001", "Item ID": "ITEM-101", "Date": "2026-06-10", "Quantity": 15, "Type": "Outgoing", "Reason": "صادر لطلب رقم ORD-5001", "User": "النظام" },
-    { "Movement ID": "MOV-1002", "Item ID": "ITEM-201", "Date": "2026-06-10", "Quantity": 15, "Type": "Outgoing", "Reason": "صادر لطلب رقم ORD-5001", "User": "النظام" }
+    { "Movement ID": "MOV-1002", "Item ID": "ITEM-201", "Date": "2026-06-10", "Quantity": 15, "Type": "Outgoing", "Reason": "صادر لطلب رقم ORD-5001", "User": "النظام" },
+    { "Movement ID": "MOV-1003", "Item ID": "ITEM-102", "Date": "2026-06-15", "Quantity": 30, "Type": "Outgoing", "Reason": "صادر لطلب رقم ORD-5002", "User": "النظام" },
+    { "Movement ID": "MOV-1004", "Item ID": "ITEM-103", "Date": "2026-06-15", "Quantity": 30, "Type": "Outgoing", "Reason": "صادر لطلب رقم ORD-5002", "User": "النظام" }
   ],
   Settings: [
     { "Key": "Business Name", "Value": "الماسة للستائر والديكور" },
@@ -129,6 +144,12 @@ class ApiService {
 
   saveLocalDb() {
     localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(this.db));
+  }
+
+  resetToDemoDatabase() {
+    this.db = JSON.parse(JSON.stringify(demoDatabase));
+    this.saveLocalDb();
+    this.notifySyncListeners();
   }
 
   loadSyncQueue() {
