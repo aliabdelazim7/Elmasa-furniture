@@ -15,7 +15,7 @@ const SHEETS_SCHEMA = {
   ],
   "Orders": [
     "Order ID", "Customer ID", "Order Date", "Delivery Date", "Installation Date", 
-    "Assigned Technician", "Order Status", "Total Cost", "Paid Amount", "Remaining Amount", "Notes"
+    "Assigned Technician", "Order Status", "Total Cost", "Paid Amount", "Remaining Amount", "Notes", "Discount"
   ],
   "Rooms": [
     "Room ID", "Order ID", "Customer ID", "Room Name", "Width", "Height", "Curtain Type", "Fabric Type", "Color", "Quantity",

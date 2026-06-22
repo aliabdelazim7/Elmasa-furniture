@@ -51,6 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("order-sewing-cost")?.addEventListener("input", calculateOrderTotals);
   document.getElementById("order-install-cost")?.addEventListener("input", calculateOrderTotals);
   document.getElementById("order-extra-cost")?.addEventListener("input", calculateOrderTotals);
+  document.getElementById("order-discount")?.addEventListener("input", calculateOrderTotals);
   document.getElementById("order-paid-amount")?.addEventListener("input", calculateOrderTotals);
 
   // Payment modal submission
@@ -460,6 +461,35 @@ window.openOrderModal = function(orderId = null) {
         "Side Extension": r["Side Extension"] || 20
       }));
 
+      document.getElementById("order-sewing-cost").value = 0;
+      document.getElementById("order-install-cost").value = 0;
+      document.getElementById("order-extra-cost").value = 0;
+      document.getElementById("order-discount").value = parseFloat(o["Discount"]) || 0;
+      
+      originalPaidAmount = parseFloat(o["Paid Amount"]) || 0;
+      document.getElementById("order-paid-amount").value = originalPaidAmount;
+      // Disable edit paid amount during editing (force user to use Dollar icon to add payment instead of overriding history)
+      document.getElementById("order-paid-amount").disabled = true;
+
+      document.getElementById("order-notes").value = o["Notes"] || "";
+
+      // Load Rooms associated with order
+      builderRooms = (db.Rooms || []).filter(r => r["Order ID"] === orderId).map(r => ({
+        roomName: r["Room Name"],
+        width: r["Width"],
+        height: r["Height"],
+        curtainType: r["Curtain Type"],
+        fabricType: r["Fabric Type"],
+        color: r["Color"],
+        quantity: r["Quantity"],
+        "Fold Multiplier": r["Fold Multiplier"] || 2.5,
+        "Sheer Checked": r["Sheer Checked"] || "False",
+        "Blackout Checked": r["Blackout Checked"] || "False",
+        "Installation Type": r["Installation Type"] || "حائط (Wall)",
+        "Pull Direction": r["Pull Direction"] || "يمين ويسار (اتجاهين)",
+        "Side Extension": r["Side Extension"] || 20
+      }));
+
       // Load Materials associated with order
       builderMaterials = (db.OrderMaterials || []).filter(m => m["Order ID"] === orderId).map(m => ({
         itemId: m["Item ID"],
@@ -505,6 +535,7 @@ window.openOrderModal = function(orderId = null) {
     document.getElementById("order-sewing-cost").value = 0;
     document.getElementById("order-install-cost").value = 0;
     document.getElementById("order-extra-cost").value = 0;
+    document.getElementById("order-discount").value = 0;
     document.getElementById("order-paid-amount").value = 0;
   }
 
@@ -796,9 +827,10 @@ function calculateOrderTotals() {
   const sewing = parseFloat(document.getElementById("order-sewing-cost").value) || 0;
   const install = parseFloat(document.getElementById("order-install-cost").value) || 0;
   const extra = parseFloat(document.getElementById("order-extra-cost").value) || 0;
+  const discount = parseFloat(document.getElementById("order-discount").value) || 0;
   const paid = parseFloat(document.getElementById("order-paid-amount").value) || 0;
 
-  const total = materialsCost + sewing + install + extra;
+  const total = Math.max(0, materialsCost + sewing + install + extra - discount);
   const rem = Math.max(0, total - paid);
 
   document.getElementById("total-materials-cost").textContent = formatCurrency(materialsCost);
@@ -853,13 +885,14 @@ async function handleOrderSubmit(e) {
   const sewing = parseFloat(document.getElementById("order-sewing-cost").value) || 0;
   const install = parseFloat(document.getElementById("order-install-cost").value) || 0;
   const extra = parseFloat(document.getElementById("order-extra-cost").value) || 0;
+  const discount = parseFloat(document.getElementById("order-discount").value) || 0;
   
-  if (sewing < 0 || install < 0 || extra < 0) {
-    showToast("لا يمكن إدخال قيم تكاليف سالبة!", "error");
+  if (sewing < 0 || install < 0 || extra < 0 || discount < 0) {
+    showToast("لا يمكن إدخال قيم تكاليف أو خصم سالبة!", "error");
     return;
   }
   
-  const totalCost = materialsCost + sewing + install + extra;
+  const totalCost = Math.max(0, materialsCost + sewing + install + extra - discount);
   
   // Paid amount calculation: if editing, keep original paid. If new, use paid input
   let paidAmount = originalPaidAmount;
@@ -870,7 +903,7 @@ async function handleOrderSubmit(e) {
       return;
     }
     if (paidAmount > totalCost) {
-      showToast("قيمة العربون المدفوع لا يمكن أن تتجاوز التكلفة الإجمالية للطلب!", "error");
+      showToast("قيمة العربون المدفوع لا يمكن أن تتجاوز التكلفة الإجمالية للطلب بعد الخصم!", "error");
       return;
     }
   }
@@ -913,7 +946,8 @@ async function handleOrderSubmit(e) {
       "Total Cost": totalCost,
       "Paid Amount": paidAmount,
       "Remaining Amount": remainingAmount,
-      "Notes": notes
+      "Notes": notes,
+      "Discount": discount
     };
 
     // Format rooms payload
@@ -1106,14 +1140,24 @@ window.printOrderInvoice = function(orderId) {
         <!-- Order Balances calculations -->
         <div class="w-2/5 font-mono text-left space-y-1 text-xs">
           <div class="flex justify-between">
+            <span class="font-sans">المجموع الفرعي (قبل الخصم):</span>
+            <span>${formatCurrency((parseFloat(o["Total Cost"]) || 0) + (parseFloat(o["Discount"]) || 0))}</span>
+          </div>
+          ${parseFloat(o["Discount"]) > 0 ? `
+          <div class="flex justify-between text-rose-500">
+            <span class="font-sans">خصم ممنوح:</span>
+            <span>-${formatCurrency(o["Discount"])}</span>
+          </div>
+          ` : ''}
+          <div class="flex justify-between border-t border-slate-200 pt-1 font-bold">
             <span class="font-sans">إجمالي التكلفة الكلية:</span>
-            <span class="font-bold">${formatCurrency(o["Total Cost"])}</span>
+            <span>${formatCurrency(o["Total Cost"])}</span>
           </div>
           <div class="flex justify-between text-emerald-600">
             <span class="font-sans">إجمالي المبلغ المسدد:</span>
             <span class="font-bold">${formatCurrency(o["Paid Amount"])}</span>
           </div>
-          <div class="flex justify-between border-t border-slate-300 pt-1 text-rose-600 font-bold">
+          <div class="flex justify-between border-t border-slate-350 pt-1 text-rose-600 font-bold">
             <span class="font-sans">المبلغ المتبقي للتحصيل:</span>
             <span>${formatCurrency(o["Remaining Amount"])}</span>
           </div>
