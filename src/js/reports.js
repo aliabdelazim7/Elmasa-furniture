@@ -79,9 +79,9 @@ function renderReportData(tab) {
 
       return `
         <tr class="border-b border-slate-100 dark:border-slate-800 text-xs">
-          <td class="py-2 px-4 font-mono font-bold text-slate-700 dark:text-slate-300">${o["Order ID"]}</td>
+          <td class="py-2 px-4 font-mono font-bold text-slate-700 dark:text-slate-300">${escapeHtml(o["Order ID"])}</td>
           <td class="py-2 px-4 font-mono">${o["Order Date"]}</td>
-          <td class="py-2 px-4 font-bold text-slate-800 dark:text-slate-200">${name}</td>
+          <td class="py-2 px-4 font-bold text-slate-800 dark:text-slate-200">${escapeHtml(name)}</td>
           <td class="py-2 px-4 font-mono text-left">${formatCurrency(total)}</td>
           <td class="py-2 px-4 font-mono text-left text-emerald-600">${formatCurrency(paid)}</td>
           <td class="py-2 px-4 font-mono text-left text-rose-500 font-semibold">${formatCurrency(rem)}</td>
@@ -161,8 +161,8 @@ function renderReportData(tab) {
         bestTbody.innerHTML = best.map((c, idx) => `
           <tr class="border-b border-slate-100 dark:border-slate-800 text-xs">
             <td class="py-2 px-4 text-center font-bold text-indigo-600 font-mono">${idx + 1}</td>
-            <td class="py-2 px-4 font-bold text-slate-800 dark:text-slate-200">${c.name}</td>
-            <td class="py-2 px-4 font-mono">${c.phone}</td>
+            <td class="py-2 px-4 font-bold text-slate-800 dark:text-slate-200">${escapeHtml(c.name)}</td>
+            <td class="py-2 px-4 font-mono">${escapeHtml(c.phone)}</td>
             <td class="py-2 px-4 font-mono text-left">${formatCurrency(c.purchased)}</td>
           </tr>
         `).join("");
@@ -178,9 +178,9 @@ function renderReportData(tab) {
       } else {
         debtTbody.innerHTML = debtors.map(c => `
           <tr class="border-b border-slate-100 dark:border-slate-800 text-xs">
-            <td class="py-2 px-4 font-mono font-bold text-slate-600 dark:text-slate-400">${c.id}</td>
-            <td class="py-2 px-4 font-bold text-slate-800 dark:text-slate-200">${c.name}</td>
-            <td class="py-2 px-4 font-mono">${c.phone}</td>
+            <td class="py-2 px-4 font-mono font-bold text-slate-600 dark:text-slate-400">${escapeHtml(c.id)}</td>
+            <td class="py-2 px-4 font-bold text-slate-800 dark:text-slate-200">${escapeHtml(c.name)}</td>
+            <td class="py-2 px-4 font-mono">${escapeHtml(c.phone)}</td>
             <td class="py-2 px-4 font-mono text-left text-rose-500 font-bold">${formatCurrency(c.remaining)}</td>
           </tr>
         `).join("");
@@ -205,10 +205,10 @@ function renderReportData(tab) {
       } else {
         lowTbody.innerHTML = lowStock.map(p => `
           <tr class="border-b border-slate-100 dark:border-slate-800 text-xs">
-            <td class="py-2 px-4 font-mono font-bold text-slate-600 dark:text-slate-400">${p["Item ID"]}</td>
-            <td class="py-2 px-4 font-bold text-slate-800 dark:text-slate-200">${p["Item Name"]}</td>
-            <td class="py-2 px-4 font-mono text-center font-bold text-rose-500">${p["Quantity Available"]} ${translateUnit(p["Unit"])}</td>
-            <td class="py-2 px-4 font-mono text-center text-slate-500 dark:text-slate-400">${p["Minimum Quantity Alert"]} ${translateUnit(p["Unit"])}</td>
+            <td class="py-2 px-4 font-mono font-bold text-slate-600 dark:text-slate-400">${escapeHtml(p["Item ID"])}</td>
+            <td class="py-2 px-4 font-bold text-slate-800 dark:text-slate-200">${escapeHtml(p["Item Name"])}</td>
+            <td class="py-2 px-4 font-mono text-center font-bold text-rose-500">${p["Quantity Available"]} ${translateUnit(escapeHtml(p["Unit"]))}</td>
+            <td class="py-2 px-4 font-mono text-center text-slate-500 dark:text-slate-400">${p["Minimum Quantity Alert"]} ${translateUnit(escapeHtml(p["Unit"]))}</td>
           </tr>
         `).join("");
       }
@@ -237,10 +237,10 @@ function renderReportData(tab) {
       } else {
         conTbody.innerHTML = sortedMats.map(m => `
           <tr class="border-b border-slate-100 dark:border-slate-800 text-xs">
-            <td class="py-2 px-4 font-mono font-bold text-slate-600 dark:text-slate-400">${m.id}</td>
-            <td class="py-2 px-4 font-bold text-slate-800 dark:text-slate-200">${m.name}</td>
+            <td class="py-2 px-4 font-mono font-bold text-slate-600 dark:text-slate-400">${escapeHtml(m.id)}</td>
+            <td class="py-2 px-4 font-bold text-slate-800 dark:text-slate-200">${escapeHtml(m.name)}</td>
             <td class="py-2 px-4 text-right text-slate-500 dark:text-slate-400">${translateCategory(m.cat)}</td>
-            <td class="py-2 px-4 font-mono text-center font-bold text-indigo-600">${m.qty.toFixed(1)} ${translateUnit(m.unit)}</td>
+            <td class="py-2 px-4 font-mono text-center font-bold text-indigo-600">${m.qty.toFixed(1)} ${translateUnit(escapeHtml(m.unit))}</td>
           </tr>
         `).join("");
       }
@@ -269,7 +269,7 @@ function renderReportData(tab) {
 
       return `
         <tr class="border-b border-slate-100 dark:border-slate-800 text-xs">
-          <td class="py-2 px-4 font-bold text-slate-800 dark:text-slate-200">${techName}</td>
+          <td class="py-2 px-4 font-bold text-slate-800 dark:text-slate-200">${escapeHtml(techName)}</td>
           <td class="py-2 px-4 text-center font-mono font-bold text-emerald-600">${completedCount} تركيبات</td>
           <td class="py-2 px-4 text-center font-mono font-bold text-amber-500">${pendingCount} تركيبات</td>
           <td class="py-2 px-4 font-mono text-left font-semibold text-slate-900 dark:text-slate-100">${formatCurrency(associatedRevenue)}</td>

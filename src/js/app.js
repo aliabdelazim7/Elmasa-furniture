@@ -411,8 +411,8 @@ function checkStockAlertNotifications() {
     } else {
       list.innerHTML = lowStock.map(p => `
         <div class="p-2 border-b border-slate-100 dark:border-slate-800 text-right cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800" onclick="clickNotificationProduct('${p["Item ID"]}')">
-          <p class="font-bold text-slate-800 dark:text-slate-200 text-[11px]">${p["Item Name"]}</p>
-          <p class="text-[9px] text-rose-500 font-semibold">المخزون الحالي: ${p["Quantity Available"]} ${p["Unit"]} (حد الأمان: ${p["Minimum Quantity Alert"]})</p>
+          <p class="font-bold text-slate-800 dark:text-slate-200 text-[11px]">${escapeHtml(p["Item Name"])}</p>
+          <p class="text-[9px] text-rose-500 font-semibold">المخزون الحالي: ${p["Quantity Available"]} ${escapeHtml(p["Unit"])} (حد الأمان: ${p["Minimum Quantity Alert"]})</p>
         </div>
       `).join("");
     }
@@ -475,8 +475,8 @@ function renderGlobalSearchResults(query) {
     html += `<div class="font-bold text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-1 mb-1 text-right">العملاء</div>`;
     html += customers.map(c => `
       <div onclick="clickGlobalSearchCustomer('${c["Customer ID"]}')" class="p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer flex justify-between items-center transition-all">
-        <span class="font-bold text-slate-800 dark:text-slate-200 text-[11px]">${c["Full Name"]}</span>
-        <span class="text-slate-500 font-mono text-[10px]">${c["Phone Number"]}</span>
+        <span class="font-bold text-slate-800 dark:text-slate-200 text-[11px]">${escapeHtml(c["Full Name"])}</span>
+        <span class="text-slate-500 font-mono text-[10px]">${escapeHtml(c["Phone Number"])}</span>
       </div>
     `).join("");
   }
@@ -485,7 +485,7 @@ function renderGlobalSearchResults(query) {
     html += `<div class="font-bold text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-1 mt-2 mb-1 text-right">الطلبات</div>`;
     html += orders.map(o => `
       <div onclick="clickGlobalSearchOrder('${o["Order ID"]}')" class="p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer flex justify-between items-center transition-all">
-        <span class="font-bold text-indigo-600 font-mono text-[11px]">${o["Order ID"]}</span>
+        <span class="font-bold text-indigo-600 font-mono text-[11px]">${escapeHtml(o["Order ID"])}</span>
         <span class="text-slate-500 text-[10px]">${formatCurrency(o["Total Cost"])}</span>
       </div>
     `).join("");
@@ -495,7 +495,7 @@ function renderGlobalSearchResults(query) {
     html += `<div class="font-bold text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-1 mt-2 mb-1 text-right">المخزن</div>`;
     html += products.map(p => `
       <div onclick="clickGlobalSearchProduct('${p["Item ID"]}')" class="p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer flex justify-between items-center transition-all">
-        <span class="font-bold text-slate-800 dark:text-slate-200 text-[11px]">${p["Item Name"]}</span>
+        <span class="font-bold text-slate-800 dark:text-slate-200 text-[11px]">${escapeHtml(p["Item Name"])}</span>
         <span class="text-emerald-600 font-mono text-[10px]">${formatCurrency(p["Selling Price"])}</span>
       </div>
     `).join("");
@@ -700,3 +700,13 @@ async function sha256(message) {
   const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   return hashHex;
 }
+
+window.escapeHtml = function(str) {
+  if (str === null || str === undefined) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+};

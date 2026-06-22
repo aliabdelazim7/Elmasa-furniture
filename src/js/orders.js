@@ -156,13 +156,13 @@ window.renderOrders = function() {
 
     return `
       <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-xs">
-        <td class="py-3 px-6 font-mono font-bold text-slate-600 dark:text-slate-400">${o["Order ID"]}</td>
+        <td class="py-3 px-6 font-mono font-bold text-slate-600 dark:text-slate-400">${escapeHtml(o["Order ID"])}</td>
         <td class="py-3 px-6 text-right">
-          <div class="font-bold text-slate-900 dark:text-slate-100">${custName}</div>
+          <div class="font-bold text-slate-900 dark:text-slate-100">${escapeHtml(custName)}</div>
           <div class="text-[10px] text-slate-400 font-mono">${o["Order Date"]}</div>
         </td>
         <td class="py-3 px-6 text-right text-slate-500 dark:text-slate-400 font-mono">${o["Installation Date"] || "-"}</td>
-        <td class="py-3 px-6 text-right font-medium text-slate-700 dark:text-slate-300">${o["Assigned Technician"] || "-"}</td>
+        <td class="py-3 px-6 text-right font-medium text-slate-700 dark:text-slate-300">${escapeHtml(o["Assigned Technician"] || "-")}</td>
         <td class="py-3 px-6 text-center">
           <span class="inline-flex items-center px-2 py-0.5 rounded border text-[10px] font-bold ${badgeClass}">
             ${translateStatus(o["Order Status"])}
@@ -176,13 +176,13 @@ window.renderOrders = function() {
         </td>
         <td class="py-3 px-6 text-center">
           <div class="flex items-center justify-center space-x-reverse space-x-1">
-            <button onclick="openOrderModal('${o["Order ID"]}')" class="p-1 border border-slate-200 dark:border-slate-700 rounded text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800" title="تعديل تفاصيل الطلب">
+            <button onclick="openOrderModal('${escapeHtml(o["Order ID"])}')" class="p-1 border border-slate-200 dark:border-slate-700 rounded text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800" title="تعديل تفاصيل الطلب">
               <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
             </button>
-            <button onclick="openPaymentModal('${o["Order ID"]}')" class="p-1 border border-slate-200 dark:border-slate-700 rounded text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30" title="تسجيل دفعة سداد">
+            <button onclick="openPaymentModal('${escapeHtml(o["Order ID"])}')" class="p-1 border border-slate-200 dark:border-slate-700 rounded text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30" title="تسجيل دفعة سداد">
               <i data-lucide="dollar-sign" class="w-3.5 h-3.5"></i>
             </button>
-            <button onclick="printOrderInvoice('${o["Order ID"]}')" class="p-1 border border-slate-200 dark:border-slate-700 rounded text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/30" title="طباعة الفاتورة">
+            <button onclick="printOrderInvoice('${escapeHtml(o["Order ID"])}')" class="p-1 border border-slate-200 dark:border-slate-700 rounded text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/30" title="طباعة الفاتورة">
               <i data-lucide="printer" class="w-3.5 h-3.5"></i>
             </button>
           </div>
@@ -248,8 +248,8 @@ function renderInstallationSchedule() {
             <i data-lucide="calendar" class="w-6 h-6"></i>
           </div>
           <div>
-            <h4 class="text-sm font-bold text-slate-900 dark:text-slate-100">${custName}</h4>
-            <p class="text-xs text-slate-500 dark:text-slate-400 font-mono">${o["Installation Date"]} | الفني: ${o["Assigned Technician"] || "غير محدد"}</p>
+            <h4 class="text-sm font-bold text-slate-900 dark:text-slate-100">${escapeHtml(custName)}</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-mono">${o["Installation Date"]} | الفني: ${escapeHtml(o["Assigned Technician"] || "غير محدد")}</p>
           </div>
         </div>
         
@@ -258,10 +258,10 @@ function renderInstallationSchedule() {
             ${statusLabel}
           </span>
           <div class="flex items-center space-x-reverse space-x-1">
-            <a href="tel:${custPhone}" class="p-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800" title="اتصال بالعميل">
+            <a href="tel:${escapeHtml(custPhone)}" class="p-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800" title="اتصال بالعميل">
               <i data-lucide="phone" class="w-4 h-4"></i>
             </a>
-            <button onclick="openOrderModal('${o["Order ID"]}')" class="p-2 border border-slate-200 dark:border-slate-700 rounded-lg text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/30" title="تحديث حالة التركيب">
+            <button onclick="openOrderModal('${escapeHtml(o["Order ID"])}')" class="p-2 border border-slate-200 dark:border-slate-700 rounded-lg text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/30" title="تحديث حالة التركيب">
               <i data-lucide="settings" class="w-4 h-4"></i>
             </button>
           </div>
@@ -333,7 +333,7 @@ window.populateOrderCustomersDropdown = function(selectedCustomerId = null) {
   const custSelect = document.getElementById("order-customer-select");
   if (custSelect) {
     custSelect.innerHTML = `<option value="">-- اختر العميل --</option>` +
-      (db.Customers || []).map(c => `<option value="${c["Customer ID"]}">${c["Full Name"]} (${c["Phone Number"]})</option>`).join("");
+      (db.Customers || []).map(c => `<option value="${escapeHtml(c["Customer ID"])}">${escapeHtml(c["Full Name"])} (${escapeHtml(c["Phone Number"])})</option>`).join("");
     if (selectedCustomerId) {
       custSelect.value = selectedCustomerId;
     }
@@ -377,7 +377,7 @@ window.openOrderModal = function(orderId = null) {
   const techSelect = document.getElementById("order-technician-select");
   if (techSelect) {
     techSelect.innerHTML = `<option value="">-- اختر الفني --</option>` +
-      (db.Technicians || []).map(t => `<option value="${t["Technician Name"]}">${t["Technician Name"]}</option>`).join("");
+      (db.Technicians || []).map(t => `<option value="${escapeHtml(t["Technician Name"])}">${escapeHtml(t["Technician Name"])}</option>`).join("");
   }
 
   // Populate Auto Estimators dropdowns
@@ -393,22 +393,22 @@ window.openOrderModal = function(orderId = null) {
   const ringsSelect = document.getElementById("est-rings");
   const bracketsSelect = document.getElementById("est-brackets");
 
-  const fabricOptions = `<option value="">-- اختر القماش --</option>` + fabrics.map(f => `<option value="${f["Item ID"]}">${f["Item Name"]}</option>`).join("");
+  const fabricOptions = `<option value="">-- اختر القماش --</option>` + fabrics.map(f => `<option value="${escapeHtml(f["Item ID"])}">${escapeHtml(f["Item Name"])}</option>`).join("");
   if (mainFabricSelect) mainFabricSelect.innerHTML = fabricOptions;
   if (sheerFabricSelect) sheerFabricSelect.innerHTML = fabricOptions;
   if (blackoutFabricSelect) blackoutFabricSelect.innerHTML = fabricOptions;
 
   if (tapeSelect) {
-    tapeSelect.innerHTML = `<option value="">-- اختر الشريط --</option>` + accessories.map(a => `<option value="${a["Item ID"]}">${a["Item Name"]}</option>`).join("");
+    tapeSelect.innerHTML = `<option value="">-- اختر الشريط --</option>` + accessories.map(a => `<option value="${escapeHtml(a["Item ID"])}">${escapeHtml(a["Item Name"])}</option>`).join("");
   }
   if (rodSelect) {
-    rodSelect.innerHTML = `<option value="">-- اختر الماسورة --</option>` + hardwares.map(h => `<option value="${h["Item ID"]}">${h["Item Name"]}</option>`).join("");
+    rodSelect.innerHTML = `<option value="">-- اختر الماسورة --</option>` + hardwares.map(h => `<option value="${escapeHtml(h["Item ID"])}">${escapeHtml(h["Item Name"])}</option>`).join("");
   }
   if (ringsSelect) {
-    ringsSelect.innerHTML = `<option value="">-- اختر الحلقات --</option>` + [...accessories, ...hardwares].map(a => `<option value="${a["Item ID"]}">${a["Item Name"]}</option>`).join("");
+    ringsSelect.innerHTML = `<option value="">-- اختر الحلقات --</option>` + [...accessories, ...hardwares].map(a => `<option value="${escapeHtml(a["Item ID"])}">${escapeHtml(a["Item Name"])}</option>`).join("");
   }
   if (bracketsSelect) {
-    bracketsSelect.innerHTML = `<option value="">-- اختر الحوامل --</option>` + hardwares.map(h => `<option value="${h["Item ID"]}">${h["Item Name"]}</option>`).join("");
+    bracketsSelect.innerHTML = `<option value="">-- اختر الحوامل --</option>` + hardwares.map(h => `<option value="${escapeHtml(h["Item ID"])}">${escapeHtml(h["Item Name"])}</option>`).join("");
   }
 
   // Reset builders
@@ -522,11 +522,11 @@ function renderBuilderRooms() {
           return `
             <tr class="border-b border-slate-100 dark:border-slate-800">
               <td class="py-2 font-bold text-slate-800 dark:text-slate-200">
-                <div>${r.roomName}</div>
+                <div>${escapeHtml(r.roomName)}</div>
                 <div class="text-[10px] text-indigo-500 font-normal">كشكشة: ${mult}x | تثبيت: ${inst} | سحب: ${pull} | زيادة: ${ext}سم${layerStr}</div>
               </td>
               <td class="py-2 font-mono">${r.width} م × ${r.height} م</td>
-              <td class="py-2">${r.curtainType} / ${r.fabricType} (${r.color})</td>
+              <td class="py-2">${escapeHtml(r.curtainType)} / ${escapeHtml(r.fabricType)} (${escapeHtml(r.color)})</td>
               <td class="py-2 font-mono">${r.quantity}</td>
               <td class="py-2 text-center">
                 <button type="button" class="text-rose-500 hover:text-rose-700" onclick="removeBuilderRoom(${index})">
@@ -667,7 +667,7 @@ function renderBuilderMaterials() {
   const matSelect = document.getElementById("material-item-select");
   if (matSelect && matSelect.children.length <= 1) {
     matSelect.innerHTML = `<option value="">-- اختر خامة/خدمة --</option>` +
-      (db.InventoryItems || []).map(p => `<option value="${p["Item ID"]}">${p["Item Name"]} (${p["Selling Price"]} ${window.appState.settings.currency} / ${p["Unit"]})</option>`).join("");
+      (db.InventoryItems || []).map(p => `<option value="${escapeHtml(p["Item ID"])}">${escapeHtml(p["Item Name"])} (${p["Selling Price"]} ${window.appState.settings.currency} / ${escapeHtml(p["Unit"])})</option>`).join("");
   }
 
   if (builderMaterials.length === 0) {
@@ -696,8 +696,8 @@ function renderBuilderMaterials() {
 
           return `
             <tr class="border-b border-slate-100 dark:border-slate-800">
-              <td class="py-2 font-bold text-slate-800 dark:text-slate-200">${name}</td>
-              <td class="py-2 font-mono">${m.qty} ${unit}</td>
+              <td class="py-2 font-bold text-slate-800 dark:text-slate-200">${escapeHtml(name)}</td>
+              <td class="py-2 font-mono">${m.qty} ${escapeHtml(unit)}</td>
               <td class="py-2 font-mono text-left">${formatCurrency(price)}</td>
               <td class="py-2 font-mono text-left text-slate-900 dark:text-slate-100">${formatCurrency(total)}</td>
               <td class="py-2 text-center">
@@ -913,22 +913,22 @@ window.printOrderInvoice = function(orderId) {
       <!-- Invoice Header -->
       <div class="flex justify-between items-start border-b border-slate-300 pb-4 mb-4">
         <div>
-          <h2 class="text-xl font-bold font-display text-indigo-600">${window.appState.settings.businessName}</h2>
-          <p class="text-xs text-slate-500">${window.appState.settings.address}</p>
-          <p class="text-xs text-slate-500">تليفون: ${window.appState.settings.phone}</p>
+          <h2 class="text-xl font-bold font-display text-indigo-600">${escapeHtml(window.appState.settings.businessName)}</h2>
+          <p class="text-xs text-slate-500">${escapeHtml(window.appState.settings.address)}</p>
+          <p class="text-xs text-slate-500">تليفون: ${escapeHtml(window.appState.settings.phone)}</p>
         </div>
         <div class="text-left font-mono">
           <h3 class="text-lg font-bold">فاتورة طلبية</h3>
-          <p class="text-xs text-slate-500">رقم الفاتورة: ${o["Order ID"]}</p>
+          <p class="text-xs text-slate-500">رقم الفاتورة: ${escapeHtml(o["Order ID"])}</p>
           <p class="text-xs text-slate-500">التاريخ: ${o["Order Date"]}</p>
         </div>
       </div>
 
       <!-- Customer Details -->
       <div class="grid grid-cols-2 gap-4 border border-slate-200 rounded-lg p-3 bg-slate-50/50 mb-4 text-xs">
-        <div><strong>العميل:</strong> ${custName}</div>
-        <div><strong>الهاتف:</strong> ${custPhone}</div>
-        <div class="col-span-2"><strong>العنوان:</strong> ${custAddr}</div>
+        <div><strong>العميل:</strong> ${escapeHtml(custName)}</div>
+        <div><strong>الهاتف:</strong> ${escapeHtml(custPhone)}</div>
+        <div class="col-span-2"><strong>العنوان:</strong> ${escapeHtml(custAddr)}</div>
       </div>
 
       <!-- Rooms Measurements Details -->
@@ -946,10 +946,10 @@ window.printOrderInvoice = function(orderId) {
         <tbody>
           ${rooms.map(r => `
             <tr>
-              <td class="border border-slate-200 py-1.5 font-bold">${r["Room Name"]}</td>
+              <td class="border border-slate-200 py-1.5 font-bold">${escapeHtml(r["Room Name"])}</td>
               <td class="border border-slate-200 py-1.5 font-mono">${r["Width"]} م × ${r["Height"]} م</td>
-              <td class="border border-slate-200 py-1.5">${r["Curtain Type"]}</td>
-              <td class="border border-slate-200 py-1.5">${r["Fabric Type"]} (${r["Color"]})</td>
+              <td class="border border-slate-200 py-1.5">${escapeHtml(r["Curtain Type"])}</td>
+              <td class="border border-slate-200 py-1.5">${escapeHtml(r["Fabric Type"])} (${escapeHtml(r["Color"])})</td>
               <td class="border border-slate-200 py-1.5 font-mono">${r["Quantity"]}</td>
             </tr>
           `).join("")}
@@ -974,8 +974,8 @@ window.printOrderInvoice = function(orderId) {
             const unit = item ? item["Unit"] : "";
             return `
               <tr>
-                <td class="border border-slate-200 py-1.5 pr-2 font-bold">${name}</td>
-                <td class="border border-slate-200 py-1.5 text-center font-mono">${m["Quantity Used"]} ${unit}</td>
+                <td class="border border-slate-200 py-1.5 pr-2 font-bold">${escapeHtml(name)}</td>
+                <td class="border border-slate-200 py-1.5 text-center font-mono">${m["Quantity Used"]} ${escapeHtml(unit)}</td>
                 <td class="border border-slate-200 py-1.5 text-left font-mono pl-2">${formatCurrency(m["Unit Price"])}</td>
                 <td class="border border-slate-200 py-1.5 text-left font-mono pl-2">${formatCurrency(m["Total Price"])}</td>
               </tr>

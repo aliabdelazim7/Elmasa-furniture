@@ -99,26 +99,32 @@ window.renderCustomers = function() {
     const totalPurchased = customerOrders.reduce((sum, o) => sum + (parseFloat(o["Total Cost"]) || 0), 0);
     const totalRemaining = customerOrders.reduce((sum, o) => sum + (parseFloat(o["Remaining Amount"]) || 0), 0);
 
+    const safeId = escapeHtml(c["Customer ID"]);
+    const safeName = escapeHtml(c["Full Name"]);
+    const safePhone = escapeHtml(c["Phone Number"]);
+    const safeSecPhone = c["Secondary Phone"] ? `/ ${escapeHtml(c["Secondary Phone"])}` : '';
+    const safeAddress = c["Address"] ? escapeHtml(c["Address"]) : '-';
+
     return `
       <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-xs">
-        <td class="py-3 px-6 font-mono font-bold text-slate-600 dark:text-slate-400">${c["Customer ID"]}</td>
+        <td class="py-3 px-6 font-mono font-bold text-slate-600 dark:text-slate-400">${safeId}</td>
         <td class="py-3 px-6 text-right">
-          <div class="font-bold text-slate-900 dark:text-slate-100 cursor-pointer hover:text-indigo-600" onclick="openCustomerProfile('${c["Customer ID"]}')">
-            ${c["Full Name"]}
+          <div class="font-bold text-slate-900 dark:text-slate-100 cursor-pointer hover:text-indigo-600" onclick="openCustomerProfile('${safeId}')">
+            ${safeName}
           </div>
         </td>
-        <td class="py-3 px-6 text-right font-mono">${c["Phone Number"]} ${c["Secondary Phone"] ? `/ ${c["Secondary Phone"]}` : ''}</td>
-        <td class="py-3 px-6 text-right text-slate-500 dark:text-slate-400 max-w-xs truncate">${c["Address"] || "-"}</td>
+        <td class="py-3 px-6 text-right font-mono">${safePhone} ${safeSecPhone}</td>
+        <td class="py-3 px-6 text-right text-slate-500 dark:text-slate-400 max-w-xs truncate">${safeAddress}</td>
         <td class="py-3 px-6 text-left font-mono">
           <div class="font-semibold text-slate-800 dark:text-slate-200">${formatCurrency(totalPurchased)}</div>
           ${totalRemaining > 0 ? `<div class="text-[10px] text-rose-500 font-bold">المتبقي: ${formatCurrency(totalRemaining)}</div>` : `<div class="text-[10px] text-emerald-600 font-bold">خالص الحساب</div>`}
         </td>
         <td class="py-3 px-6 text-center">
           <div class="flex items-center justify-center space-x-reverse space-x-1">
-            <button onclick="openCustomerProfile('${c["Customer ID"]}')" class="p-1 border border-slate-200 dark:border-slate-700 rounded text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/30" title="عرض ملف العميل">
+            <button onclick="openCustomerProfile('${safeId}')" class="p-1 border border-slate-200 dark:border-slate-700 rounded text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/30" title="عرض ملف العميل">
               <i data-lucide="eye" class="w-3.5 h-3.5"></i>
             </button>
-            <button onclick="openCustomerModal('${c["Customer ID"]}')" class="p-1 border border-slate-200 dark:border-slate-700 rounded text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800" title="تعديل بيانات العميل">
+            <button onclick="openCustomerModal('${safeId}')" class="p-1 border border-slate-200 dark:border-slate-700 rounded text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800" title="تعديل بيانات العميل">
               <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
             </button>
           </div>
@@ -256,14 +262,14 @@ window.openCustomerProfile = function(customerId) {
     roomsDiv.innerHTML = customerRooms.map(r => `
       <div class="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700/50 flex flex-col justify-between space-y-2 text-xs">
         <div class="flex justify-between items-center font-bold text-slate-900 dark:text-slate-100">
-          <span>${r["Room Name"]}</span>
-          <span class="px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 text-[10px] font-semibold">${r["Curtain Type"]}</span>
+          <span>${escapeHtml(r["Room Name"])}</span>
+          <span class="px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 text-[10px] font-semibold">${escapeHtml(r["Curtain Type"])}</span>
         </div>
         <div class="grid grid-cols-2 gap-2 text-slate-600 dark:text-slate-400 mt-1">
           <div>العرض: <span class="font-mono font-bold text-slate-900 dark:text-slate-100">${r["Width"]} م</span></div>
           <div>الارتفاع: <span class="font-mono font-bold text-slate-900 dark:text-slate-100">${r["Height"]} م</span></div>
-          <div>نوع القماش: <span class="font-bold text-slate-800 dark:text-slate-200">${r["Fabric Type"] || "-"}</span></div>
-          <div>اللون: <span class="font-bold text-slate-800 dark:text-slate-200">${r["Color"] || "-"}</span></div>
+          <div>نوع القماش: <span class="font-bold text-slate-800 dark:text-slate-200">${escapeHtml(r["Fabric Type"] || "-")}</span></div>
+          <div>اللون: <span class="font-bold text-slate-800 dark:text-slate-200">${escapeHtml(r["Color"] || "-")}</span></div>
           <div>الكمية: <span class="font-mono font-bold text-slate-800 dark:text-slate-200">${r["Quantity"]} حبات</span></div>
         </div>
       </div>
@@ -287,7 +293,7 @@ window.openCustomerProfile = function(customerId) {
 
       return `
         <tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/30 text-xs">
-          <td class="py-2 px-4 font-mono font-bold text-indigo-600">${o["Order ID"]}</td>
+          <td class="py-2 px-4 font-mono font-bold text-indigo-600">${escapeHtml(o["Order ID"])}</td>
           <td class="py-2 px-4 font-mono">${o["Order Date"]}</td>
           <td class="py-2 px-4 text-center">
             <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeClass}">
@@ -327,8 +333,8 @@ window.openCustomerProfile = function(customerId) {
     matsDiv.innerHTML = Object.values(grouped).map(g => `
       <div class="flex justify-between items-center p-2 border-b border-slate-50 dark:border-slate-800 text-xs">
         <div>
-          <span class="font-bold text-slate-800 dark:text-slate-200">${g.name}</span>
-          <span class="text-[10px] text-slate-400 font-mono">(${g.qty.toFixed(1)} ${g.unit})</span>
+          <span class="font-bold text-slate-800 dark:text-slate-200">${escapeHtml(g.name)}</span>
+          <span class="text-[10px] text-slate-400 font-mono">(${g.qty.toFixed(1)} ${escapeHtml(g.unit)})</span>
         </div>
         <span class="font-mono text-slate-500 font-semibold">${formatCurrency(g.cost)}</span>
       </div>

@@ -7,6 +7,8 @@
  */
 
 // Define database schema and table headers
+const SECURE_TOKEN = "ELMASA_API_SECURE_TOKEN_2026_xYz987!";
+
 const SHEETS_SCHEMA = {
   "Customers": [
     "Customer ID", "Full Name", "Phone Number", "Secondary Phone", "Address", "Notes", "Created Date"
@@ -75,6 +77,10 @@ function initializeDatabase() {
 
 // GET request handler: Returns all database tables as JSON
 function doGet(e) {
+  const token = e.parameter && e.parameter.token;
+  if (token !== SECURE_TOKEN) {
+    return createJsonResponse({ success: false, error: "Unauthorized access: Invalid or missing token" });
+  }
   initializeDatabase();
   const lock = LockService.getScriptLock();
   try {
@@ -90,16 +96,27 @@ function doGet(e) {
 
 // POST request handler: Performs database writes and batch operations
 function doPost(e) {
+  if (!e.postData || !e.postData.contents) {
+    return createJsonResponse({ success: false, error: "Empty request body" });
+  }
+  
+  let request;
+  try {
+    request = JSON.parse(e.postData.contents);
+  } catch (err) {
+    return createJsonResponse({ success: false, error: "Malformed JSON" });
+  }
+
+  const token = (e.parameter && e.parameter.token) || (request && request.token);
+  if (token !== SECURE_TOKEN) {
+    return createJsonResponse({ success: false, error: "Unauthorized access: Invalid or missing token" });
+  }
+
   initializeDatabase();
   const lock = LockService.getScriptLock();
   try {
     lock.waitLock(30000);
     
-    if (!e.postData || !e.postData.contents) {
-      return createJsonResponse({ success: false, error: "Empty request body" });
-    }
-    
-    const request = JSON.parse(e.postData.contents);
     const action = request.action;
     const payload = request.payload;
     

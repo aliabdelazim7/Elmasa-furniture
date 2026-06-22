@@ -167,12 +167,17 @@ window.renderInventory = function() {
       stockStatusText = `متوفر: ${qty} ${translateUnit(p["Unit"])}`;
     }
 
+    const safeId = escapeHtml(p["Item ID"]);
+    const safeName = escapeHtml(p["Item Name"]);
+    const safeBarcode = p["Barcode"] ? escapeHtml(p["Barcode"]) : '';
+    const safeSupplier = p["Supplier"] ? escapeHtml(p["Supplier"]) : '-';
+
     return `
       <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-xs">
-        <td class="py-3 px-6 font-mono font-bold text-slate-600 dark:text-slate-400">${p["Item ID"]}</td>
+        <td class="py-3 px-6 font-mono font-bold text-slate-600 dark:text-slate-400">${safeId}</td>
         <td class="py-3 px-6 text-right">
-          <div class="font-bold text-slate-900 dark:text-slate-100">${p["Item Name"]}</div>
-          ${p["Barcode"] ? `<span class="text-[9px] text-slate-400 bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono">${p["Barcode"]}</span>` : ''}
+          <div class="font-bold text-slate-900 dark:text-slate-100">${safeName}</div>
+          ${safeBarcode ? `<span class="text-[9px] text-slate-400 bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono">${safeBarcode}</span>` : ''}
         </td>
         <td class="py-3 px-6 text-right text-slate-500 dark:text-slate-400">${translateCategory(p["Item Category"])}</td>
         <td class="py-3 px-6 text-left font-mono">${formatCurrency(p["Purchase Price"])}</td>
@@ -182,10 +187,10 @@ window.renderInventory = function() {
             ${stockStatusText}
           </span>
         </td>
-        <td class="py-3 px-6 text-right text-slate-500 dark:text-slate-400 max-w-xs truncate">${p["Supplier"] || "-"}</td>
+        <td class="py-3 px-6 text-right text-slate-500 dark:text-slate-400 max-w-xs truncate">${safeSupplier}</td>
         <td class="py-3 px-6 text-center">
           <div class="flex items-center justify-center space-x-reverse space-x-1">
-            <button onclick="openItemModal('${p["Item ID"]}')" class="p-1 border border-slate-200 dark:border-slate-700 rounded text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800" title="تعديل تفاصيل المنتج">
+            <button onclick="openItemModal('${safeId}')" class="p-1 border border-slate-200 dark:border-slate-700 rounded text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800" title="تعديل تفاصيل المنتج">
               <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
             </button>
           </div>
@@ -240,15 +245,15 @@ function renderStockMovements() {
     return `
       <tr class="border-b border-slate-100 dark:border-slate-800 text-xs">
         <td class="py-2 px-4 font-mono">${m["Date"]}</td>
-        <td class="py-2 px-4 font-bold text-slate-800 dark:text-slate-200">${itemName}</td>
+        <td class="py-2 px-4 font-bold text-slate-800 dark:text-slate-200">${escapeHtml(itemName)}</td>
         <td class="py-2 px-4 text-center">
           <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${badgeClass}">
             ${typeText}
           </span>
         </td>
-        <td class="py-2 px-4 font-mono text-center font-bold text-slate-900 dark:text-slate-100">${m["Quantity"]} ${translateUnit(unit)}</td>
-        <td class="py-2 px-4 text-right text-slate-500 dark:text-slate-400 truncate max-w-xs">${m["Reason"] || "-"}</td>
-        <td class="py-2 px-4 text-center text-slate-400 dark:text-slate-500">${m["User"] || "مجهول"}</td>
+        <td class="py-2 px-4 font-mono text-center font-bold text-slate-900 dark:text-slate-100">${m["Quantity"]} ${translateUnit(escapeHtml(unit))}</td>
+        <td class="py-2 px-4 text-right text-slate-500 dark:text-slate-400 truncate max-w-xs">${escapeHtml(m["Reason"] || "-")}</td>
+        <td class="py-2 px-4 text-center text-slate-400 dark:text-slate-500">${escapeHtml(m["User"] || "مجهول")}</td>
       </tr>
     `;
   }).join("");

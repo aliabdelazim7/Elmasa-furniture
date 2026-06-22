@@ -131,8 +131,8 @@ window.renderExpenses = function() {
 
   tbody.innerHTML = paginated.map(e => `
     <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-xs">
-      <td class="py-3 px-6 font-mono font-bold text-slate-600 dark:text-slate-400">${e["Expense ID"]}</td>
-      <td class="py-3 px-6 text-right font-bold text-slate-900 dark:text-slate-100">${e["Expense Name"]}</td>
+      <td class="py-3 px-6 font-mono font-bold text-slate-600 dark:text-slate-400">${escapeHtml(e["Expense ID"])}</td>
+      <td class="py-3 px-6 text-right font-bold text-slate-900 dark:text-slate-100">${escapeHtml(e["Expense Name"])}</td>
       <td class="py-3 px-6 text-right text-slate-500 dark:text-slate-400">${translateExpenseCategory(e["Category"])}</td>
       <td class="py-3 px-6 text-left font-mono font-bold text-slate-900 dark:text-slate-100">${formatCurrency(e["Amount"])}</td>
       <td class="py-3 px-6 text-center font-mono">${e["Date"]}</td>

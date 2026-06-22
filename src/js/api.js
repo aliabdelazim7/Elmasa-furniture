@@ -6,6 +6,7 @@
 const API_CONFIG_KEY = "elmasa_system_settings";
 const LOCAL_DB_KEY = "elmasa_local_database";
 const SYNC_QUEUE_KEY = "elmasa_pending_sync_queue";
+const SECURE_TOKEN = "ELMASA_API_SECURE_TOKEN_2026_xYz987!";
 
 // Default System Configuration
 const defaultSettings = {
@@ -165,7 +166,8 @@ class ApiService {
     }
 
     try {
-      const response = await fetch(this.settings.webAppUrl, {
+      const url = this.settings.webAppUrl + (this.settings.webAppUrl.includes("?") ? "&" : "?") + "token=" + SECURE_TOKEN;
+      const response = await fetch(url, {
         method: "GET",
         mode: "cors"
       });
@@ -212,10 +214,11 @@ class ApiService {
 
     // Try posting directly to backend
     try {
-      const response = await fetch(this.settings.webAppUrl, {
+      const url = this.settings.webAppUrl + (this.settings.webAppUrl.includes("?") ? "&" : "?") + "token=" + SECURE_TOKEN;
+      const response = await fetch(url, {
         method: "POST",
         mode: "cors",
-        body: JSON.stringify({ action, payload })
+        body: JSON.stringify({ action, payload, token: SECURE_TOKEN })
       });
 
       if (!response.ok) throw new Error("Write failed with code " + response.status);
@@ -264,10 +267,11 @@ class ApiService {
     
     for (const item of queueCopy) {
       try {
-        const response = await fetch(this.settings.webAppUrl, {
+        const url = this.settings.webAppUrl + (this.settings.webAppUrl.includes("?") ? "&" : "?") + "token=" + SECURE_TOKEN;
+        const response = await fetch(url, {
           method: "POST",
           mode: "cors",
-          body: JSON.stringify({ action: item.action, payload: item.payload })
+          body: JSON.stringify({ action: item.action, payload: item.payload, token: SECURE_TOKEN })
         });
         
         if (response.ok) {

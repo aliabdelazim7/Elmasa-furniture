@@ -118,8 +118,8 @@ window.renderDashboard = function() {
     } else {
       mostUsedDiv.innerHTML = sortedMats.map(s => `
         <div class="flex justify-between items-center text-xs py-1 border-b border-slate-100 dark:border-slate-800">
-          <span class="font-bold text-slate-800 dark:text-slate-200">${s.name}</span>
-          <span class="font-mono text-indigo-600 font-semibold">${s.qty.toFixed(1)} ${translateUnit(s.unit)}</span>
+          <span class="font-bold text-slate-800 dark:text-slate-200">${escapeHtml(s.name)}</span>
+          <span class="font-mono text-indigo-600 font-semibold">${s.qty.toFixed(1)} ${translateUnit(escapeHtml(s.unit))}</span>
         </div>
       `).join("");
     }
