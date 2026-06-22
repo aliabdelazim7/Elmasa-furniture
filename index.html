@@ -683,7 +683,6 @@
             <button id="report-tab-profit" class="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">تقرير الأرباح (P&L)</button>
             <button id="report-tab-customer" class="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">تقرير حسابات العملاء</button>
             <button id="report-tab-inventory" class="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">تقرير جرد وحالة المخازن</button>
-            <button id="report-tab-danger" class="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 shadow-sm hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all mr-auto">المنطقة الخطرة (Danger Zone)</button>
           </div>
 
           <!-- Report Sections -->
@@ -859,31 +858,6 @@
             </div>
           </div>
 
-          <!-- F. Danger zone report -->
-          <div id="report-sec-danger" class="bg-white dark:bg-slate-900 border border-rose-200 dark:border-rose-950 p-6 rounded-2xl shadow-sm space-y-4 hidden">
-            <div class="flex items-center space-x-reverse space-x-3">
-              <div class="bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 p-3 rounded-xl">
-                <i data-lucide="shield-alert" class="w-7 h-7"></i>
-              </div>
-              <div>
-                <h3 class="text-sm font-bold text-rose-600">لوحة الحماية والمنطقة الخطرة للورشة (Danger Zone)</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">يتيح هذا الخيار حذف وتصفير جميع الفواتير والمخازن والعملاء للبدء من الصفر.</p>
-              </div>
-            </div>
-            
-            <div class="bg-rose-50/50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/60 p-4 rounded-xl text-xs text-rose-800 dark:text-rose-400">
-              <strong class="block mb-1">تحذير حرج:</strong>
-              سيقوم هذا الإجراء بمسح كافة الأوراق والجداول بقاعدة بيانات جوجل شيتس وسجل المتصفح كلياً. يرجى أخذ نسخة احتياطية من ملف الإكسيل قبل إتمام الإجراء.
-            </div>
-
-            <form id="danger-purge-form" class="space-y-4 text-xs text-right max-w-md">
-              <div>
-                <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">يرجى كتابة العبارة التالية بدقة للمتابعة: <strong class="text-rose-600 font-mono">مسح البيانات</strong></label>
-                <input type="text" id="danger-confirm-phrase" autocomplete="off" required placeholder="اكتب العبارة التأكيدية بدقة..." class="w-full bg-slate-50 dark:bg-slate-800 border border-rose-200 dark:border-rose-900 px-3 py-2 rounded-lg focus:outline-none focus:border-rose-500 text-slate-800 dark:text-slate-100 font-bold">
-              </div>
-              <button type="submit" class="py-2.5 px-4 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg shadow-md transition-all">تأكيد عملية مسح وتصفير النظام</button>
-            </form>
-          </div>
         </section>
 
         <!-- ==================== SYSTEM SETTINGS PAGE ==================== -->
@@ -937,6 +911,32 @@
               </div>
 
               <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-md transition-all">حفظ البيانات والربط</button>
+            </form>
+          </div>
+
+          <!-- Danger zone in Settings -->
+          <div class="bg-white dark:bg-slate-900 border border-rose-200 dark:border-rose-950 p-6 rounded-2xl shadow-sm space-y-4 max-w-2xl mt-6">
+            <div class="flex items-center space-x-reverse space-x-3">
+              <div class="bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 p-3 rounded-xl">
+                <i data-lucide="shield-alert" class="w-7 h-7"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-rose-600">لوحة الحماية والمنطقة الخطرة للورشة (Danger Zone)</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">يتيح هذا الخيار حذف وتصفير جميع الفواتير والمخازن والعملاء للبدء من الصفر.</p>
+              </div>
+            </div>
+            
+            <div class="bg-rose-50/50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/60 p-4 rounded-xl text-xs text-rose-800 dark:text-rose-400">
+              <strong class="block mb-1">تحذير حرج:</strong>
+              سيقوم هذا الإجراء بمسح كافة الأوراق والجداول بقاعدة بيانات جوجل شيتس وسجل المتصفح كلياً. يرجى أخذ نسخة احتياطية من ملف الإكسيل قبل إتمام الإجراء.
+            </div>
+
+            <form id="danger-purge-form" class="space-y-4 text-xs text-right w-full">
+              <div>
+                <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">يرجى كتابة العبارة التالية بدقة للمتابعة: <strong class="text-rose-600 font-mono">مسح البيانات</strong></label>
+                <input type="text" id="danger-confirm-phrase" autocomplete="off" required placeholder="اكتب العبارة التأكيدية بدقة..." class="w-full bg-slate-50 dark:bg-slate-800 border border-rose-200 dark:border-rose-900 px-3 py-2 rounded-lg focus:outline-none focus:border-rose-500 text-slate-800 dark:text-slate-100 font-bold">
+              </div>
+              <button type="submit" class="py-2.5 px-4 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg shadow-md transition-all">تأكيد عملية مسح وتصفير النظام</button>
             </form>
           </div>
         </section>

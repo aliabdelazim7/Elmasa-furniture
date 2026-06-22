@@ -433,37 +433,9 @@ window.openOrderModal = function(orderId = null) {
       if (techSelect) techSelect.value = o["Assigned Technician"] || "";
       document.getElementById("order-status-select").value = o["Order Status"];
       
-      document.getElementById("order-sewing-cost").value = 0;
-      document.getElementById("order-install-cost").value = 0;
-      document.getElementById("order-extra-cost").value = 0;
-      
-      originalPaidAmount = parseFloat(o["Paid Amount"]) || 0;
-      document.getElementById("order-paid-amount").value = originalPaidAmount;
-      // Disable edit paid amount during editing (force user to use Dollar icon to add payment instead of overriding history)
-      document.getElementById("order-paid-amount").disabled = true;
-
-      document.getElementById("order-notes").value = o["Notes"] || "";
-
-      // Load Rooms associated with order
-      builderRooms = (db.Rooms || []).filter(r => r["Order ID"] === orderId).map(r => ({
-        roomName: r["Room Name"],
-        width: r["Width"],
-        height: r["Height"],
-        curtainType: r["Curtain Type"],
-        fabricType: r["Fabric Type"],
-        color: r["Color"],
-        quantity: r["Quantity"],
-        "Fold Multiplier": r["Fold Multiplier"] || 2.5,
-        "Sheer Checked": r["Sheer Checked"] || "False",
-        "Blackout Checked": r["Blackout Checked"] || "False",
-        "Installation Type": r["Installation Type"] || "حائط (Wall)",
-        "Pull Direction": r["Pull Direction"] || "يمين ويسار (اتجاهين)",
-        "Side Extension": r["Side Extension"] || 20
-      }));
-
-      document.getElementById("order-sewing-cost").value = 0;
-      document.getElementById("order-install-cost").value = 0;
-      document.getElementById("order-extra-cost").value = 0;
+      document.getElementById("order-sewing-cost").value = parseFloat(o["Sewing Cost"]) || 0;
+      document.getElementById("order-install-cost").value = parseFloat(o["Installation Cost"]) || 0;
+      document.getElementById("order-extra-cost").value = parseFloat(o["Extra Cost"]) || 0;
       document.getElementById("order-discount").value = parseFloat(o["Discount"]) || 0;
       
       originalPaidAmount = parseFloat(o["Paid Amount"]) || 0;
@@ -947,7 +919,10 @@ async function handleOrderSubmit(e) {
       "Paid Amount": paidAmount,
       "Remaining Amount": remainingAmount,
       "Notes": notes,
-      "Discount": discount
+      "Discount": discount,
+      "Sewing Cost": sewing,
+      "Installation Cost": install,
+      "Extra Cost": extra
     };
 
     // Format rooms payload

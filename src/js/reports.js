@@ -5,7 +5,7 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   // Bind report selector tab buttons
-  const tabs = ["sales", "profit", "customer", "inventory", "danger"];
+  const tabs = ["sales", "profit", "customer", "inventory"];
   tabs.forEach(tab => {
     document.getElementById(`report-tab-${tab}`)?.addEventListener("click", () => {
       selectReportTab(tab);
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function selectReportTab(activeTab) {
-  const tabs = ["sales", "profit", "customer", "inventory", "danger"];
+  const tabs = ["sales", "profit", "customer", "inventory"];
   tabs.forEach(tab => {
     const btn = document.getElementById(`report-tab-${tab}`);
     const section = document.getElementById(`report-sec-${tab}`);
