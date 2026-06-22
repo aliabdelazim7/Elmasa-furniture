@@ -15,7 +15,7 @@ const defaultSettings = {
   phone: "+201018907086",
   currency: "EGP",
   adminEmail: "admin@elmasa.com",
-  adminPassword: "admin"
+  adminPassword: "elmasa_admin"
 };
 
 // Initial Realistic Curtain Workshop Demo Database (Arabic localized)
@@ -81,7 +81,7 @@ class ApiService {
     this.settings = this.loadConfig();
     this.db = this.loadLocalDb();
     this.syncQueue = this.loadSyncQueue();
-    this.isMockMode = !this.settings.webAppUrl;
+    this.isMockMode = (localStorage.getItem("elmasa_demo_session") === "true") || !this.settings.webAppUrl;
     this.syncListeners = [];
     this.isSyncing = false;
 
@@ -110,7 +110,7 @@ class ApiService {
   saveConfig(newSettings) {
     this.settings = { ...this.settings, ...newSettings };
     localStorage.setItem(API_CONFIG_KEY, JSON.stringify(this.settings));
-    this.isMockMode = !this.settings.webAppUrl;
+    this.isMockMode = (localStorage.getItem("elmasa_demo_session") === "true") || !this.settings.webAppUrl;
   }
 
   loadLocalDb() {

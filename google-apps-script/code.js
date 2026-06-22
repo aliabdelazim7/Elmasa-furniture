@@ -66,7 +66,7 @@ function initializeDatabase() {
       ["Phone Number", "+201018907086"],
       ["Currency", "EGP"],
       ["Admin Email", "admin@elmasa.com"],
-      ["Admin Password", "admin"],
+      ["Admin Password", "elmasa_admin"],
       ["Initialized", "true"]
     ];
     settingsSheet.getRange(2, 1, defaultSettings.length, 2).setValues(defaultSettings);

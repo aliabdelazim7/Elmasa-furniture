@@ -221,9 +221,21 @@ function initGlobalEvents() {
     const email = document.getElementById("login-email").value.trim();
     const pass = document.getElementById("login-password").value.trim();
 
+    // 1. Handle Demo Mode login bypass
+    if (email === "demo@elmasa.com" && pass === "elmasa_demo") {
+      localStorage.setItem("elmasa_session_active", "true");
+      localStorage.setItem("elmasa_demo_session", "true");
+      api.isMockMode = true; // force mock mode immediately
+      showToast("تم الدخول في وضع التجربة بنجاح (قاعدة بيانات محلية آمنة)", "success");
+      initAuth();
+      startActivityTracker();
+      return;
+    }
+
+    // 2. Handle Admin Mode login
     const config = api.loadConfig();
     const correctEmail = config.adminEmail || "admin@elmasa.com";
-    const correctPass = config.adminPassword || "admin";
+    const correctPass = config.adminPassword || "elmasa_admin";
 
     let hashedPass = pass;
     const isHashed = /^[a-f0-9]{64}$/i.test(correctPass);
@@ -233,13 +245,37 @@ function initGlobalEvents() {
 
     if (email === correctEmail && (hashedPass === correctPass || pass === correctPass)) {
       localStorage.setItem("elmasa_session_active", "true");
-      showToast("تم تسجيل الدخول بنجاح", "success");
+      localStorage.removeItem("elmasa_demo_session");
+      api.isMockMode = !api.settings.webAppUrl; // restore mock state based on API URL
+      showToast("تم تسجيل دخول المسؤول بنجاح (ربط سحابي حقيقي)", "success");
       initAuth();
       startActivityTracker();
     } else {
       showToast("خطأ في البريد الإلكتروني أو كلمة المرور!", "error");
     }
   });
+
+  window.fillLoginCreds = function(mode) {
+    const emailInput = document.getElementById("login-email");
+    const passInput = document.getElementById("login-password");
+    if (emailInput && passInput) {
+      if (mode === "admin") {
+        emailInput.value = "admin@elmasa.com";
+        const config = api.loadConfig();
+        const correctPass = config.adminPassword || "elmasa_admin";
+        const isHashed = /^[a-f0-9]{64}$/i.test(correctPass);
+        if (isHashed) {
+          passInput.value = "";
+          passInput.placeholder = "أدخل كلمة مرور المسؤول الخاصة بك";
+        } else {
+          passInput.value = correctPass;
+        }
+      } else if (mode === "demo") {
+        emailInput.value = "demo@elmasa.com";
+        passInput.value = "elmasa_demo";
+      }
+    }
+  };
 
   // Logout trigger
   document.getElementById("sidebar-logout-btn")?.addEventListener("click", () => {
