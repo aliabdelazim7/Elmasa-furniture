@@ -64,8 +64,8 @@ function initializeDatabase() {
   if (settingsSheet.getLastRow() <= 1) {
     const defaultSettings = [
       ["Business Name", "الماسة للستائر والديكور"],
-      ["Address", "القاهرة، مصر"],
-      ["Phone Number", "+201018907086"],
+      ["Address", "الدقهليه - المنصوره - مركز تمي الامديد - ظفر"],
+      ["Phone Number", "+20 10 07036248"],
       ["Currency", "EGP"],
       ["Admin Email", "elmasa_admin_secure@elmasa.com"],
       ["Admin Password", "ElmasaAdminSecure2026!#"],
@@ -639,8 +639,8 @@ function handleClearDatabase(payload) {
   const settingsSheet = ss.getSheetByName("Settings");
   const defaultSettings = [
     ["Business Name", "الماسة للستائر والديكور"],
-    ["Address", "القاهرة، مصر"],
-    ["Phone Number", "+201018907086"],
+    ["Address", "الدقهليه - المنصوره - مركز تمي الامديد - ظفر"],
+    ["Phone Number", "+20 10 07036248"],
     ["Currency", "EGP"],
     ["Admin Email", "elmasa_admin_secure@elmasa.com"],
     ["Admin Password", "ElmasaAdminSecure2026!#"],

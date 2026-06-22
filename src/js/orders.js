@@ -1024,7 +1024,7 @@ window.printOrderInvoice = function(orderId) {
       <!-- Printing signature footer -->
       <div class="mt-8 border-t border-slate-200 pt-4 flex justify-between text-center text-[10px] text-slate-500 font-sans">
         <div>توقيع مستلم الفاتورة: ............................</div>
-        <div>توقيع إدارة الماسة للستائر: ............................</div>
+        <div>توقيع مدير الماسة للستائر (خليل علي خليل): ............................</div>
       </div>
     </div>
   `;

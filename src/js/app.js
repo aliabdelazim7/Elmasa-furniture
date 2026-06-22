@@ -21,8 +21,8 @@ window.appState = {
   settings: {
     businessName: "الماسة للستائر والديكور",
     currency: "EGP",
-    address: "القاهرة، مصر",
-    phone: "+201018907086"
+    address: "الدقهليه - المنصوره - مركز تمي الامديد - ظفر",
+    phone: "+20 10 07036248"
   }
 };
 
@@ -558,8 +558,8 @@ function loadSettingsFromConfig() {
   window.appState.settings = {
     businessName: config.businessName || "الماسة للستائر والديكور",
     currency: config.currency || "EGP",
-    address: config.address || "القاهرة، مصر",
-    phone: config.phone || "+201018907086"
+    address: config.address || "الدقهليه - المنصوره - مركز تمي الامديد - ظفر",
+    phone: config.phone || "+20 10 07036248"
   };
   
   const titles = [

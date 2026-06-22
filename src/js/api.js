@@ -12,8 +12,8 @@ const SECURE_TOKEN = "ELMASA_API_SECURE_TOKEN_2026_xYz987!";
 const defaultSettings = {
   webAppUrl: "https://script.google.com/macros/s/AKfycbx8274_a2d78fn7NhnnM1Q6EwarBKvvR_YD6zkpzoSPlKW4PUi5RtNXnDVondUnuuIg/exec",
   businessName: "الماسة للستائر والديكور",
-  address: "القاهرة، مصر",
-  phone: "+201018907086",
+  address: "الدقهليه - المنصوره - مركز تمي الامديد - ظفر",
+  phone: "+20 10 07036248",
   currency: "EGP",
   adminEmail: "elmasa_admin_secure@elmasa.com",
   adminPassword: "ElmasaAdminSecure2026!#"
@@ -69,8 +69,8 @@ const demoDatabase = {
   ],
   Settings: [
     { "Key": "Business Name", "Value": "الماسة للستائر والديكور" },
-    { "Key": "Address", "Value": "القاهرة، مصر" },
-    { "Key": "Phone Number", "Value": "+201018907086" },
+    { "Key": "Address", "Value": "الدقهليه - المنصوره - مركز تمي الامديد - ظفر" },
+    { "Key": "Phone Number", "Value": "+20 10 07036248" },
     { "Key": "Currency", "Value": "EGP" },
     { "Key": "Admin Email", "Value": "elmasa_admin_secure@elmasa.com" },
     { "Key": "Admin Password", "Value": "ElmasaAdminSecure2026!#" }
@@ -568,8 +568,8 @@ class ApiService {
     this.db.StockMovements = [];
     this.db.Settings = [
       { Key: "Business Name", Value: "الماسة للستائر والديكور" },
-      { Key: "Address", Value: "القاهرة، مصر" },
-      { Key: "Phone Number", Value: "+201018907086" },
+      { Key: "Address", Value: "الدقهليه - المنصوره - مركز تمي الامديد - ظفر" },
+      { Key: "Phone Number", Value: "+20 10 07036248" },
       { Key: "Currency", Value: "EGP" },
       { Key: "Admin Email", Value: "elmasa_admin_secure@elmasa.com" },
       { Key: "Admin Password", Value: "ElmasaAdminSecure2026!#" }
