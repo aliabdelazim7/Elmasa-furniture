@@ -86,6 +86,18 @@ function initRouter() {
       hash = "dashboard";
     }
     
+    // Lock settings page with a different secure password in both Admin & Demo sessions
+    if (hash === "settings") {
+      const settingsPass = prompt("الرجاء إدخال كلمة مرور الإعدادات الخاصة للنظام:");
+      const correctSettingsPass = "ElmasaSettingsSecure2026!!";
+      if (settingsPass !== correctSettingsPass) {
+        showToast("كلمة مرور الإعدادات خاطئة! غير مسموح بالدخول.", "error");
+        const prevRoute = window.appState.currentRoute && window.appState.currentRoute !== "settings" ? window.appState.currentRoute : "dashboard";
+        window.location.hash = "#" + prevRoute;
+        return;
+      }
+    }
+    
     window.appState.currentRoute = hash;
     
     routes.forEach(route => {
