@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام الماسة للستائر | إدارة العملاء والمخازن والطلبيات</title>
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="src/css/styles.css">
+  
+  <!-- Tailwind CSS Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <script>
+    // Custom tailwind configuration for a premium, harmonious design system
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#f5f3ff',
+              100: '#ede9fe',
+              200: '#ddd6fe',
+              300: '#c4b5fd',
+              400: '#a78bfa',
+              500: '#6366f1', // Indigo accent
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            },
+            slate: {
+              950: '#0b0f19', // Premium deep dark color
+            }
+          },
+          fontFamily: {
+            sans: ['Cairo', 'Inter', 'sans-serif'],
+            display: ['Outfit', 'Cairo', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#f8fafc] text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300">
+
+  <!-- Core Page Wrapper -->
+  <div class="min-h-screen flex">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 hidden md:flex flex-col z-20 sticky top-0 h-screen no-print">
+      <!-- Logo Header -->
+      <div class="h-16 flex items-center px-6 border-b border-slate-100 dark:border-slate-800/80 space-x-reverse space-x-3">
+        <div class="bg-primary-600 text-white p-2 rounded-lg shadow-md shadow-primary-200 dark:shadow-none">
+          <i data-lucide="scissors" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h1 class="text-sm font-bold text-slate-900 dark:text-white tracking-tight font-display" id="nav-business-title">الماسة للستائر</h1>
+          <span class="text-[9px] font-bold text-indigo-500 uppercase tracking-widest">Workshop ERP</span>
+        </div>
+      </div>
+      
+      <!-- Nav Links -->
+      <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+        <a href="#dashboard" class="flex items-center px-4 py-3 rounded-lg text-sm transition-all sidebar-link-inactive" id="nav-dashboard">
+          <i data-lucide="layout-dashboard" class="w-5 h-5 ml-3"></i>
+          <span>لوحة التحكم</span>
+        </a>
+        
+        <a href="#orders" class="flex items-center px-4 py-3 rounded-lg text-sm transition-all sidebar-link-inactive" id="nav-orders">
+          <i data-lucide="shopping-bag" class="w-5 h-5 ml-3"></i>
+          <span>المقاسات والطلبات</span>
+        </a>
+        
+        <a href="#customers" class="flex items-center px-4 py-3 rounded-lg text-sm transition-all sidebar-link-inactive" id="nav-customers">
+          <i data-lucide="users" class="w-5 h-5 ml-3"></i>
+          <span>العملاء والحسابات</span>
+        </a>
+        
+        <a href="#inventory" class="flex items-center px-4 py-3 rounded-lg text-sm transition-all sidebar-link-inactive" id="nav-inventory">
+          <i data-lucide="package" class="w-5 h-5 ml-3"></i>
+          <span>إدارة المخزن</span>
+        </a>
+        
+        <a href="#expenses" class="flex items-center px-4 py-3 rounded-lg text-sm transition-all sidebar-link-inactive" id="nav-expenses">
+          <i data-lucide="wallet" class="w-5 h-5 ml-3"></i>
+          <span>دفتر المصروفات</span>
+        </a>
+        
+        <a href="#reports" class="flex items-center px-4 py-3 rounded-lg text-sm transition-all sidebar-link-inactive" id="nav-reports">
+          <i data-lucide="bar-chart-3" class="w-5 h-5 ml-3"></i>
+          <span>التقارير الإدارية</span>
+        </a>
+        
+        <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800">
+          <a href="#settings" class="flex items-center px-4 py-3 rounded-lg text-sm transition-all sidebar-link-inactive" id="nav-settings">
+            <i data-lucide="settings" class="w-5 h-5 ml-3"></i>
+            <span>إعدادات النظام</span>
+          </a>
+          <button id="sidebar-logout-btn" class="w-full flex items-center px-4 py-3 rounded-lg text-sm transition-all text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 mt-1 border border-transparent font-medium">
+            <i data-lucide="log-out" class="w-5 h-5 ml-3"></i>
+            <span>تسجيل الخروج</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Sidebar Footer Sync Status & Theme -->
+      <div class="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+        <!-- Theme Switcher -->
+        <div class="flex items-center justify-between mb-3 text-xs">
+          <span class="text-slate-400">الوضع الداكن:</span>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="theme-toggle-checkbox" class="sr-only peer">
+            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
+          </label>
+        </div>
+        
+        <div class="flex items-center justify-between text-xs mb-2">
+          <span class="text-slate-400">حالة المزامنة:</span>
+          <span id="sync-status-badge" class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">وضع التجربة</span>
+        </div>
+        <button id="sidebar-sync-btn" class="w-full flex items-center justify-center space-x-reverse space-x-2 py-2 px-3 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="sync-icon"></i>
+          <span>مزامنة البيانات</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Workspace Area -->
+    <main class="flex-1 flex flex-col min-w-0">
+      
+      <!-- Topbar Header -->
+      <header class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800/80 flex items-center justify-between px-6 z-10 sticky top-0 no-print">
+        <div class="flex items-center space-x-reverse space-x-4">
+          <!-- Mobile Menu Toggle -->
+          <button class="md:hidden p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg" id="mobile-menu-btn">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+          
+          <!-- Search box -->
+          <div class="relative hidden sm:block">
+            <div class="flex items-center space-x-reverse space-x-2 bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded-lg w-64 md:w-80 border border-transparent focus-within:border-indigo-500 dark:focus-within:border-indigo-400">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+              <input type="text" id="global-search-input" autocomplete="off" placeholder="ابحث عن عميل، طلب، خامة بالاسم..." class="bg-transparent border-none text-xs focus:outline-none w-full text-slate-700 dark:text-slate-300 placeholder-slate-400">
+            </div>
+            <!-- Global Search Results Popup -->
+            <div id="global-search-results" class="absolute top-11 right-0 w-80 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-50 hidden max-h-96 overflow-y-auto p-3 space-y-3 text-xs text-right" dir="rtl">
+              <!-- JS Populated -->
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-reverse space-x-4">
+          <div class="text-left hidden lg:block">
+            <p class="text-xs font-bold text-slate-950 dark:text-white font-display" id="header-business-name">الماسة للستائر</p>
+            <p class="text-[10px] font-semibold text-slate-400" id="header-currency-code">العملة: جنيه مصري</p>
+          </div>
+          <div class="w-px h-6 bg-slate-200 dark:bg-slate-800 hidden lg:block"></div>
+          
+          <!-- System Notifications Indicator -->
+          <div class="relative">
+            <button class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg relative" id="header-alert-btn">
+              <i data-lucide="bell" class="w-5 h-5"></i>
+              <span id="low-stock-alert-dot" class="absolute top-1 left-1 w-2.5 h-2.5 bg-rose-500 border-2 border-white dark:border-slate-900 rounded-full hidden"></span>
+            </button>
+            <!-- Notifications Dropdown -->
+            <div id="notification-popover" class="absolute top-11 left-0 w-72 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl z-50 hidden p-3 space-y-3 text-xs text-right" dir="rtl">
+              <div class="font-bold text-slate-700 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-1.5 mb-1.5 flex justify-between items-center">
+                <span>تنبيهات نقص المخزون</span>
+                <span id="notification-count-badge" class="px-1.5 py-0.5 rounded-full text-[9px] bg-rose-100 text-rose-700 font-bold hidden">0</span>
+              </div>
+              <div id="notification-list" class="space-y-2 max-h-64 overflow-y-auto text-slate-600 dark:text-slate-400">
+                <!-- JS Populated -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dynamic Page Screens Container -->
+      <div id="pages-container" class="flex-1 p-6 overflow-y-auto no-print">
+        
+        <!-- ==================== DASHBOARD PAGE ==================== -->
+        <section id="dashboard-page" class="space-y-6 hidden">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white heading-display">لوحة التحكم والتحليلات</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400">ملخص مبيعات الورشة، حركة المقاسات، والتركيبات المجدولة لليوم.</p>
+          </div>
+          
+          <!-- Financial metrics cards grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl flex items-center space-x-reverse space-x-4 shadow-sm">
+              <div class="bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 p-3 rounded-xl">
+                <i data-lucide="circle-dollar-sign" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">مبيعات اليوم النقدية</p>
+                <h3 class="text-lg font-bold font-mono text-slate-900 dark:text-white mt-1" id="dash-today-rev">0 EGP</h3>
+              </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl flex items-center space-x-reverse space-x-4 shadow-sm">
+              <div class="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 p-3 rounded-xl">
+                <i data-lucide="banknote" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">التحصيل الكلي للشهر</p>
+                <h3 class="text-lg font-bold font-mono text-slate-900 dark:text-white mt-1" id="dash-month-rev">0 EGP</h3>
+              </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl flex items-center space-x-reverse space-x-4 shadow-sm">
+              <div class="bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 p-3 rounded-xl">
+                <i data-lucide="trending-up" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">صافي أرباح الشهر (P&L)</p>
+                <h3 class="text-lg font-bold font-mono text-slate-900 dark:text-white mt-1" id="dash-month-profit">0 EGP</h3>
+              </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl flex items-center space-x-reverse space-x-4 shadow-sm">
+              <div class="bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 p-3 rounded-xl">
+                <i data-lucide="credit-card" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">إجمالي ديون العملاء المعلقة</p>
+                <h3 class="text-lg font-bold font-mono text-slate-900 dark:text-white mt-1" id="dash-total-debts">0 EGP</h3>
+              </div>
+            </div>
+          </div>
+
+          <!-- Operational metrics grid -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Active orders stats -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm text-center">
+              <h4 class="text-xs font-bold text-slate-400 dark:text-slate-500">الطلبيات النشطة بالورشة</h4>
+              <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mt-2 font-mono" id="dash-active-orders">0</p>
+            </div>
+            
+            <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm text-center">
+              <h4 class="text-xs font-bold text-slate-400 dark:text-slate-500">طلبات متأخرة عن التسليم</h4>
+              <p class="text-3xl font-bold text-rose-500 mt-2 font-mono" id="dash-delayed-orders">0</p>
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm text-center">
+              <h4 class="text-xs font-bold text-slate-400 dark:text-slate-500">تركيبات مجدولة لليوم</h4>
+              <p class="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mt-2 font-mono" id="dash-today-install">0</p>
+            </div>
+          </div>
+
+          <!-- Chart.js Graphics Visual Matrix -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Daily Sales Chart Card -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm">
+              <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800 pb-2 mb-4">المبيعات النقدية لآخر 7 أيام</h3>
+              <div class="relative h-64 w-full">
+                <canvas id="dailySalesChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Monthly Sales Chart Card -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm">
+              <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800 pb-2 mb-4">منحنى التحصيل النقدي الشهري</h3>
+              <div class="relative h-64 w-full">
+                <canvas id="monthlyRevenueChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Top Used materials & Payments methods -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm">
+              <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800 pb-2 mb-4">توزيع طرق دفع العملاء</h3>
+              <div class="relative h-64 w-full">
+                <canvas id="paymentMethodsChart"></canvas>
+              </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm flex flex-col justify-between">
+              <div>
+                <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800 pb-2 mb-4">الخامات الأكثر سحباً واستهلاكاً</h3>
+                <div class="relative h-40 w-full mb-4">
+                  <canvas id="materialConsumptionChart"></canvas>
+                </div>
+              </div>
+              <div class="border-t border-slate-100 dark:border-slate-800 pt-3">
+                <div class="flex justify-between items-center text-xs text-slate-400 mb-2">
+                  <span>المادة الأكثر استهلاكاً</span>
+                  <span>الكمية المسحوبة</span>
+                </div>
+                <div id="dash-most-used-list" class="space-y-1">
+                  <!-- JS Populated -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Low stock items table summary -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm flex justify-between items-center">
+            <div class="flex items-center space-x-reverse space-x-3">
+              <div class="bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 p-2 rounded-xl">
+                <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200">الخامات منخفضة المخزون</h4>
+                <p class="text-[10px] text-slate-500">يتطلب المخزن شراء خامات لتفادي توقف تفصيل ستائر العملاء.</p>
+              </div>
+            </div>
+            <div class="text-center font-mono font-bold text-rose-600 text-lg bg-rose-50 dark:bg-rose-950/30 px-3 py-1 rounded-xl" id="dash-low-stock-count">0</div>
+          </div>
+        </section>
+
+        <!-- ==================== ORDERS PAGE ==================== -->
+        <section id="orders-page" class="space-y-6 hidden">
+          <!-- Page Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+            <div>
+              <h2 class="text-2xl font-bold text-slate-900 dark:text-white heading-display">المقاسات وإدارة الطلبات</h2>
+              <p class="text-sm text-slate-500 dark:text-slate-400">إدخال مقاسات غرف الشقق، وتفصيل الستائر، وتحديد الخامات المستهلكة.</p>
+            </div>
+            <button id="order-add-btn" class="flex items-center space-x-reverse space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md transition-all self-start">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>إنشاء طلب ومقاسات جديد</span>
+            </button>
+          </div>
+
+          <!-- Installation timeline view link -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-sm space-y-3">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2 flex items-center space-x-reverse space-x-2">
+              <i data-lucide="calendar-clock" class="w-4 h-4 text-indigo-600"></i>
+              <span>جدول ومواعيد التركيبات القادمة للورشة</span>
+            </h3>
+            <div id="installation-schedule-list" class="space-y-2.5 max-h-72 overflow-y-auto">
+              <!-- JS Populated -->
+            </div>
+          </div>
+
+          <!-- Filtering Tool block -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-4 rounded-2xl shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex items-center bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded-lg w-full md:w-72 text-xs border border-transparent focus-within:border-indigo-500">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 ml-2"></i>
+              <input type="text" id="order-search-input" placeholder="ابحث برقم الفاتورة أو العميل..." class="bg-transparent border-none focus:outline-none w-full text-slate-700 dark:text-slate-300">
+            </div>
+            <div class="flex gap-4">
+              <select id="order-filter-status" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg text-xs font-semibold focus:outline-none">
+                <option value="All">جميع الحالات</option>
+                <option value="New">جديد</option>
+                <option value="Measurements Taken">تم رفع القياسات</option>
+                <option value="Materials Prepared">الخامات جاهزة</option>
+                <option value="Sewing In Progress">جاري التفصيل والقص</option>
+                <option value="Ready For Installation">جاهز للتركيب</option>
+                <option value="Installed">تم التركيب</option>
+                <option value="Delivered">تم التسليم</option>
+                <option value="Closed">مغلق ومسلم</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Orders Grid List -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-right text-xs">
+                <thead>
+                  <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-bold">
+                    <th class="py-3 px-6">رقم الطلب</th>
+                    <th class="py-3 px-6">العميل والتاريخ</th>
+                    <th class="py-3 px-6">تاريخ التركيب</th>
+                    <th class="py-3 px-6">الفني المسؤول</th>
+                    <th class="py-3 px-6 text-center">حالة الطلب</th>
+                    <th class="py-3 px-6 text-left">التكلفة المالية</th>
+                    <th class="py-3 px-6 text-center">خيارات</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
+                  <!-- JS Populated -->
+                </tbody>
+              </table>
+            </div>
+            
+            <!-- Table Pagination -->
+            <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <button id="order-prev-btn" class="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold disabled:opacity-40" disabled>السابق</button>
+              <span id="order-pagination-info" class="text-[10px] text-slate-400 font-bold">عرض 0 من 0</span>
+              <button id="order-next-btn" class="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold disabled:opacity-40" disabled>التالي</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== CUSTOMERS PAGE ==================== -->
+        <section id="customers-page" class="space-y-6 hidden">
+          <!-- Page Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+            <div>
+              <h2 class="text-2xl font-bold text-slate-900 dark:text-white heading-display">العملاء وحسابات الديون (CRM)</h2>
+              <p class="text-sm text-slate-500 dark:text-slate-400">تسجيل بيانات العملاء، ومراجعة سجل الفواتير والمقاسات التفصيلية لكل شقة.</p>
+            </div>
+            <button id="cust-add-btn" class="flex items-center space-x-reverse space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md transition-all self-start">
+              <i data-lucide="user-plus" class="w-4 h-4"></i>
+              <span>تسجيل عميل جديد</span>
+            </button>
+          </div>
+
+          <!-- Searching tool -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-4 rounded-2xl shadow-sm">
+            <div class="flex items-center bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded-lg w-full md:w-72 text-xs border border-transparent focus-within:border-indigo-500">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 ml-2"></i>
+              <input type="text" id="cust-search-input" placeholder="ابحث باسم العميل أو رقم الهاتف..." class="bg-transparent border-none focus:outline-none w-full text-slate-700 dark:text-slate-300">
+            </div>
+          </div>
+
+          <!-- Customers Grid -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-2xl shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-right text-xs">
+                <thead>
+                  <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-bold">
+                    <th class="py-3 px-6">رقم العميل</th>
+                    <th class="py-3 px-6">الاسم الكامل</th>
+                    <th class="py-3 px-6">أرقام الهواتف</th>
+                    <th class="py-3 px-6">عنوان شقة التركيب</th>
+                    <th class="py-3 px-6 text-left">الملخص المالي</th>
+                    <th class="py-3 px-6 text-center">خيارات</th>
+                  </tr>
+                </thead>
+                <tbody id="customers-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
+                  <!-- JS Populated -->
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <button id="cust-prev-btn" class="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold disabled:opacity-40" disabled>السابق</button>
+              <span id="cust-pagination-info" class="text-[10px] text-slate-400 font-bold">عرض 0 من 0</span>
+              <button id="cust-next-btn" class="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold disabled:opacity-40" disabled>التالي</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== INVENTORY PAGE ==================== -->
+        <section id="inventory-page" class="space-y-6 hidden">
+          <!-- Page Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+            <div>
+              <h2 class="text-2xl font-bold text-slate-900 dark:text-white heading-display">إدارة المخزن والخامات</h2>
+              <p class="text-sm text-slate-500 dark:text-slate-400">إدارة قوائم الأقمشة، الخردوات، الإكسسوارات، مسامير التركيبات، والخدمات.</p>
+            </div>
+            <div class="flex gap-2 self-start">
+              <button id="inv-adjust-btn" class="flex items-center space-x-reverse space-x-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold px-3 py-2.5 rounded-xl shadow-sm hover:bg-slate-50 transition-all">
+                <i data-lucide="sliders" class="w-4 h-4 text-slate-500"></i>
+                <span>تسوية/جرد يدوي مخزني</span>
+              </button>
+              <button id="inv-add-btn" class="flex items-center space-x-reverse space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md transition-all">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>إضافة منتج مخزني</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Inventory statistics dashboard summary row -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm">
+              <h4 class="text-xs text-slate-400 dark:text-slate-500 font-bold">القيمة المالية الكلية للمخزن (سعر الشراء)</h4>
+              <p class="text-2xl font-bold font-mono text-slate-900 dark:text-white mt-1" id="inv-kpi-total-val">0 EGP</p>
+            </div>
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm">
+              <h4 class="text-xs text-slate-400 dark:text-slate-500 font-bold">مواد قاربت على النفاد (Low Stock)</h4>
+              <p class="text-2xl font-bold font-mono text-amber-500 mt-1" id="inv-kpi-low-stock">0</p>
+            </div>
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm">
+              <h4 class="text-xs text-slate-400 dark:text-slate-500 font-bold">مواد نافدة كلياً (Out of Stock)</h4>
+              <p class="text-2xl font-bold font-mono text-rose-500 mt-1" id="inv-kpi-out-stock">0</p>
+            </div>
+          </div>
+
+          <!-- Searching filter blocks -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex items-center bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded-lg w-full md:w-72 text-xs border border-transparent focus-within:border-indigo-500">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 ml-2"></i>
+              <input type="text" id="inv-search-input" placeholder="ابحث باسم المادة، كود الباركود..." class="bg-transparent border-none focus:outline-none w-full text-slate-700 dark:text-slate-300">
+            </div>
+            <div class="flex gap-4">
+              <select id="inv-filter-category" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg text-xs font-semibold focus:outline-none">
+                <option value="All">جميع الأقسام</option>
+                <option value="Fabric">أقمشة وثياب</option>
+                <option value="Accessories">إكسسوارات خياطة</option>
+                <option value="Hardware">مسامير وأدوات مواسير</option>
+                <option value="Services">خدمات وأجور</option>
+              </select>
+              <select id="inv-filter-status" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg text-xs font-semibold focus:outline-none">
+                <option value="All">جميع الحالات</option>
+                <option value="Available">متوفر ومستقر</option>
+                <option value="LowStock">منخفض وتحت حد الأمان</option>
+                <option value="OutOfStock">نافد كلياً</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Inventory Grid Table -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-right text-xs">
+                <thead>
+                  <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-bold">
+                    <th class="py-3 px-6">كود المادة</th>
+                    <th class="py-3 px-6">اسم المنتج / الخامة</th>
+                    <th class="py-3 px-6">القسم</th>
+                    <th class="py-3 px-6 text-left">تكلفة الشراء</th>
+                    <th class="py-3 px-6 text-left">سعر البيع للعميل</th>
+                    <th class="py-3 px-6 text-center">الرصيد المتوفر</th>
+                    <th class="py-3 px-6 text-right">المورد</th>
+                    <th class="py-3 px-6 text-center">خيارات</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
+                  <!-- JS Populated -->
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+              <button id="inv-prev-btn" class="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold disabled:opacity-40" disabled>السابق</button>
+              <span id="inv-pagination-info" class="text-[10px] text-slate-400 font-bold">عرض 0 من 0</span>
+              <button id="inv-next-btn" class="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold disabled:opacity-40" disabled>التالي</button>
+            </div>
+          </div>
+
+          <!-- Stock Movement Records Ledger -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm p-5 space-y-4">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2 flex items-center space-x-reverse space-x-2">
+              <i data-lucide="history" class="w-4 h-4 text-indigo-600"></i>
+              <span>سجل حركة المخازن الأخيرة (تعديل، سحب، توريد)</span>
+            </h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-right text-xs">
+                <thead>
+                  <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+                    <th class="py-2 px-4">التاريخ</th>
+                    <th class="py-2 px-4">اسم الخامة</th>
+                    <th class="py-2 px-4 text-center">نوع الحركة</th>
+                    <th class="py-2 px-4 text-center">الكمية</th>
+                    <th class="py-2 px-4 text-right">السبب</th>
+                    <th class="py-2 px-4 text-center">المستخدم</th>
+                  </tr>
+                </thead>
+                <tbody id="movements-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
+                  <!-- JS Populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== EXPENSES PAGE ==================== -->
+        <section id="expenses-page" class="space-y-6 hidden">
+          <!-- Page Header -->
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white heading-display">دفتر المصروفات التشغيلية</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400">تسجيل وتصنيف كافة المصاريف مثل الإيجارات، أجور ورواتب فنيين الخياطة والتركيب، والكهرباء.</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+            <!-- Add Expense form -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm space-y-4 lg:col-span-1">
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2">تسجيل بند مصروفات جديد</h3>
+              <form id="expense-form" class="space-y-3.5 text-xs text-right">
+                <div>
+                  <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">اسم / بيان المصروف</label>
+                  <input type="text" id="exp-name" required placeholder="مثال: فاتورة كهرباء الورشة" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+                </div>
+                <div>
+                  <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">الفئة</label>
+                  <select id="exp-category" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+                    <option value="Rent">إيجارات ومقرات</option>
+                    <option value="Salaries">أجور ورواتب الموظفين</option>
+                    <option value="Electricity">فواتير كهرباء ومرافق</option>
+                    <option value="Transportation">مصاريف نقل شحن وانتقال</option>
+                    <option value="Other">مصروفات نثرية أخرى</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">المبلغ (EGP)</label>
+                  <input type="number" step="0.01" id="exp-amount" required placeholder="0.00" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100 font-mono text-left">
+                </div>
+                <div>
+                  <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">التاريخ</label>
+                  <input type="date" id="exp-date" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100 font-mono">
+                </div>
+                <div>
+                  <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">ملاحظات إضافية</label>
+                  <textarea id="exp-notes" placeholder="ملاحظات توضيحية..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100 h-16"></textarea>
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow transition-all">تسجيل المصروف الكلي</button>
+              </form>
+            </div>
+
+            <!-- Expense history list -->
+            <div class="lg:col-span-2 space-y-6">
+              <!-- Summary cards by category -->
+              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm text-center">
+                  <h5 class="text-[10px] text-slate-400 font-bold">إيجارات</h5>
+                  <p class="text-xs font-bold font-mono text-slate-900 dark:text-white mt-1" id="exp-card-rent">0 EGP</p>
+                </div>
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm text-center">
+                  <h5 class="text-[10px] text-slate-400 font-bold">رواتب</h5>
+                  <p class="text-xs font-bold font-mono text-slate-900 dark:text-white mt-1" id="exp-card-salaries">0 EGP</p>
+                </div>
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm text-center">
+                  <h5 class="text-[10px] text-slate-400 font-bold">كهرباء ومرافق</h5>
+                  <p class="text-xs font-bold font-mono text-slate-900 dark:text-white mt-1" id="exp-card-electricity">0 EGP</p>
+                </div>
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm text-center">
+                  <h5 class="text-[10px] text-slate-400 font-bold">انتقال وشحن</h5>
+                  <p class="text-xs font-bold font-mono text-slate-900 dark:text-white mt-1" id="exp-card-transport">0 EGP</p>
+                </div>
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm text-center col-span-2 md:col-span-1">
+                  <h5 class="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold">إجمالي المصروفات</h5>
+                  <p class="text-xs font-bold font-mono text-slate-900 dark:text-white mt-1" id="exp-card-total">0 EGP</p>
+                </div>
+              </div>
+
+              <!-- Filter Ledger -->
+              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded-lg w-full sm:w-64 text-xs border border-transparent focus-within:border-indigo-500">
+                  <i data-lucide="search" class="w-4 h-4 text-slate-400 ml-2"></i>
+                  <input type="text" id="exp-search-input" placeholder="ابحث ببيان أو رقم المصروف..." class="bg-transparent border-none focus:outline-none w-full text-slate-700 dark:text-slate-300">
+                </div>
+                <select id="exp-filter-category" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg text-xs font-semibold focus:outline-none text-slate-700 dark:text-slate-300">
+                  <option value="All">جميع الأقسام</option>
+                  <option value="Rent">إيجارات ومقرات</option>
+                  <option value="Salaries">أجور ورواتب الموظفين</option>
+                  <option value="Electricity">فاتورة كهرباء ومرافق</option>
+                  <option value="Transportation">مصاريف نقل شحن وانتقال</option>
+                  <option value="Other">مصروفات نثرية أخرى</option>
+                </select>
+              </div>
+
+              <!-- List Grid -->
+              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                  <table class="w-full text-right text-xs">
+                    <thead>
+                      <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-bold">
+                        <th class="py-3 px-6">كود المصروف</th>
+                        <th class="py-3 px-6">بيان المصروف</th>
+                        <th class="py-3 px-6">القسم بالفئة</th>
+                        <th class="py-3 px-6 text-left">المبلغ</th>
+                        <th class="py-3 px-6 text-center">التاريخ</th>
+                      </tr>
+                    </thead>
+                    <tbody id="expenses-table-body" class="divide-y divide-slate-100 dark:divide-slate-800">
+                      <!-- JS Populated -->
+                    </tbody>
+                  </table>
+                </div>
+                
+                <div class="p-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                  <button id="exp-prev-btn" class="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold disabled:opacity-40" disabled>السابق</button>
+                  <span id="exp-pagination-info" class="text-[10px] text-slate-400 font-bold">عرض 0 من 0</span>
+                  <button id="exp-next-btn" class="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-[10px] font-bold disabled:opacity-40" disabled>التالي</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== REPORTS PAGE ==================== -->
+        <section id="reports-page" class="space-y-6 hidden">
+          <!-- Page Header -->
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white heading-display">التقارير الإدارية والمالية</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400">تحليلات الأرباح والخسائر والمنتجات منخفضة المخزون وإنتاجية فنيي التركيب.</p>
+          </div>
+
+          <!-- Report category selector -->
+          <div class="flex flex-wrap gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+            <button id="report-tab-sales" class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow transition-all">تقرير المبيعات</button>
+            <button id="report-tab-profit" class="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">تقرير الأرباح (P&L)</button>
+            <button id="report-tab-customer" class="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">تقرير حسابات العملاء</button>
+            <button id="report-tab-inventory" class="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">تقرير جرد وحالة المخازن</button>
+            <button id="report-tab-technician" class="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">تقرير الفنيين</button>
+            <button id="report-tab-danger" class="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 shadow-sm hover:bg-rose-50 dark:hover:bg-rose-950/20 transition-all mr-auto">المنطقة الخطرة (Danger Zone)</button>
+          </div>
+
+          <!-- Report Sections -->
+          
+          <!-- A. Sales report -->
+          <div id="report-sec-sales" class="space-y-4">
+            <div class="flex justify-between items-center">
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white">جدول المبيعات التفصيلي الكلي</h3>
+              <button id="report-sales-csv" class="flex items-center space-x-reverse space-x-1.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50">
+                <i data-lucide="download" class="w-4 h-4 text-slate-500"></i>
+                <span>تصدير تقرير المبيعات Excel CSV</span>
+              </button>
+            </div>
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+              <table class="w-full text-right text-xs">
+                <thead>
+                  <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-bold">
+                    <th class="py-2.5 px-4">رقم الطلب</th>
+                    <th class="py-2.5 px-4">تاريخ الطلب</th>
+                    <th class="py-2.5 px-4">العميل</th>
+                    <th class="py-2.5 px-4 text-left">التكلفة الكلية</th>
+                    <th class="py-2.5 px-4 text-left">المبلغ المسدد</th>
+                    <th class="py-2.5 px-4 text-left">المتبقي للتحصيل</th>
+                  </tr>
+                </thead>
+                <tbody id="rep-sales-tbody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                  <!-- JS Populated -->
+                </tbody>
+                <tfoot>
+                  <tr class="bg-slate-50 dark:bg-slate-800 font-bold text-slate-900 dark:text-white border-t border-slate-200 dark:border-slate-700">
+                    <td colspan="3" class="py-3 px-4 text-right">إجمالي المبيعات والتحصيل الكلي:</td>
+                    <td id="rep-sales-total-cost" class="py-3 px-4 font-mono text-left">0 EGP</td>
+                    <td id="rep-sales-total-paid" class="py-3 px-4 font-mono text-left text-emerald-600">0 EGP</td>
+                    <td id="rep-sales-total-rem" class="py-3 px-4 font-mono text-left text-rose-600">0 EGP</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+          <!-- B. Profit report -->
+          <div id="report-sec-profit" class="space-y-4 hidden">
+            <div class="flex justify-between items-center">
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white">بيان صافي الأرباح والخسائر (Profit & Loss Statement)</h3>
+              <button id="report-profit-csv" class="flex items-center space-x-reverse space-x-1.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50">
+                <i data-lucide="download" class="w-4 h-4 text-slate-500"></i>
+                <span>تصدير كشف الأرباح Excel CSV</span>
+              </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm space-y-4 text-xs">
+                <h4 class="font-bold text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-1.5">حسابات الإيرادات والأرباح</h4>
+                <div class="flex justify-between py-2 border-b border-slate-50 dark:border-slate-800">
+                  <span>إجمالي قيمة المبيعات والفواتير (Revenue):</span>
+                  <span class="font-mono font-bold text-slate-900 dark:text-white" id="rep-prof-revenue">0 EGP</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-slate-50 dark:border-slate-800 text-emerald-600">
+                  <span>إجمالي المقبوضات والتحصيل النقدي الفعلي:</span>
+                  <span class="font-mono font-bold" id="rep-prof-cash">0 EGP</span>
+                </div>
+              </div>
+              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm space-y-4 text-xs">
+                <h4 class="font-bold text-slate-400 border-b border-slate-100 dark:border-slate-800 pb-1.5">التكاليف والمصروفات المخصومة</h4>
+                <div class="flex justify-between py-2 border-b border-slate-50 dark:border-slate-800 text-rose-500">
+                  <span>تكلفة المواد والخامات المستهلكة (COGS):</span>
+                  <span class="font-mono font-bold" id="rep-prof-cogs">0 EGP</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-slate-50 dark:border-slate-800 text-rose-500">
+                  <span>إجمالي المصروفات التشغيلية والرواتب (Expenses):</span>
+                  <span class="font-mono font-bold" id="rep-prof-expenses">0 EGP</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/60 p-6 rounded-2xl flex justify-between items-center shadow-sm">
+              <div>
+                <h4 class="text-xs font-bold text-indigo-700 dark:text-indigo-300">صافي الأرباح الكلية الكلية (Net Profit)</h4>
+                <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-1">يساوي إجمالي المبيعات مطروحاً منه تكلفة شراء الخامات والمصروفات التشغيلية.</p>
+              </div>
+              <div class="font-mono font-bold text-2xl text-indigo-600 dark:text-indigo-400" id="rep-prof-net">0 EGP</div>
+            </div>
+          </div>
+
+          <!-- C. Customer report -->
+          <div id="report-sec-customer" class="grid grid-cols-1 lg:grid-cols-2 gap-6 hidden">
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <h3 class="text-xs font-bold text-slate-900 dark:text-white">أفضل العملاء شراءً للستائر</h3>
+                <button id="report-customer-csv" class="p-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50" title="تحميل التقرير Excel">
+                  <i data-lucide="download" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+                <table class="w-full text-right text-xs">
+                  <thead>
+                    <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 font-bold">
+                      <th class="py-2.5 px-4 text-center">الترتيب</th>
+                      <th class="py-2.5 px-4">اسم العميل</th>
+                      <th class="py-2.5 px-4">رقم الهاتف</th>
+                      <th class="py-2.5 px-4 text-left">حجم المشتريات</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rep-cust-best-tbody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                    <!-- JS Populated -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <h3 class="text-xs font-bold text-rose-500">سجل حسابات العملاء الدائنين (الديون المعلقة)</h3>
+              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+                <table class="w-full text-right text-xs">
+                  <thead>
+                    <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 font-bold">
+                      <th class="py-2.5 px-4">معرف العميل</th>
+                      <th class="py-2.5 px-4">العميل</th>
+                      <th class="py-2.5 px-4">رقم الهاتف</th>
+                      <th class="py-2.5 px-4 text-left">المبلغ المتبقي للتحصيل</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rep-cust-debt-tbody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                    <!-- JS Populated -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- D. Inventory report -->
+          <div id="report-sec-inventory" class="grid grid-cols-1 lg:grid-cols-2 gap-6 hidden">
+            <div class="space-y-3">
+              <div class="flex justify-between items-center">
+                <h3 class="text-xs font-bold text-rose-500">الخامات منخفضة المخزون وتحت الأمان</h3>
+                <button id="report-inventory-csv" class="p-1.5 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50" title="تحميل التقرير Excel">
+                  <i data-lucide="download" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+                <table class="w-full text-right text-xs">
+                  <thead>
+                    <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 font-bold">
+                      <th class="py-2.5 px-4">كود الخامة</th>
+                      <th class="py-2.5 px-4">اسم الخامة</th>
+                      <th class="py-2.5 px-4 text-center">الرصيد المتبقي</th>
+                      <th class="py-2.5 px-4 text-center">حد الأمان</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rep-inv-low-tbody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                    <!-- JS Populated -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <h3 class="text-xs font-bold text-indigo-600 dark:text-indigo-400">الخامات الأكثر استهلاكاً وسحباً للتركيبات</h3>
+              <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+                <table class="w-full text-right text-xs">
+                  <thead>
+                    <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 font-bold">
+                      <th class="py-2.5 px-4">كود المادة</th>
+                      <th class="py-2.5 px-4">اسم المنتج</th>
+                      <th class="py-2.5 px-4 text-right">القسم</th>
+                      <th class="py-2.5 px-4 text-center">إجمالي الكمية المستهلكة</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rep-inv-con-tbody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                    <!-- JS Populated -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- E. Technician report -->
+          <div id="report-sec-technician" class="space-y-4 hidden">
+            <div class="flex justify-between items-center">
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white">كفاءة وإنتاجية الفنيين وقيمة التركيبات المسندة</h3>
+              <button id="report-technician-csv" class="flex items-center space-x-reverse space-x-1.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50">
+                <i data-lucide="download" class="w-4 h-4 text-slate-500"></i>
+                <span>تصدير تقرير الفنيين Excel CSV</span>
+              </button>
+            </div>
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
+              <table class="w-full text-right text-xs">
+                <thead>
+                  <tr class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-bold">
+                    <th class="py-2.5 px-4">اسم الفني</th>
+                    <th class="py-2.5 px-4 text-center">التركيبات المكتملة</th>
+                    <th class="py-2.5 px-4 text-center">التركيبات المعلقة والمجدولة</th>
+                    <th class="py-2.5 px-4 text-left">إجمالي حجم أعمال الطلبيات</th>
+                  </tr>
+                </thead>
+                <tbody id="rep-tech-tbody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                  <!-- JS Populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- F. Danger zone report -->
+          <div id="report-sec-danger" class="bg-white dark:bg-slate-900 border border-rose-200 dark:border-rose-950 p-6 rounded-2xl shadow-sm space-y-4 hidden">
+            <div class="flex items-center space-x-reverse space-x-3">
+              <div class="bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 p-3 rounded-xl">
+                <i data-lucide="shield-alert" class="w-7 h-7"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-rose-600">لوحة الحماية والمنطقة الخطرة للورشة (Danger Zone)</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">يتيح هذا الخيار حذف وتصفير جميع الفواتير والمخازن والعملاء للبدء من الصفر.</p>
+              </div>
+            </div>
+            
+            <div class="bg-rose-50/50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/60 p-4 rounded-xl text-xs text-rose-800 dark:text-rose-400">
+              <strong class="block mb-1">تحذير حرج:</strong>
+              سيقوم هذا الإجراء بمسح كافة الأوراق والجداول بقاعدة بيانات جوجل شيتس وسجل المتصفح كلياً. يرجى أخذ نسخة احتياطية من ملف الإكسيل قبل إتمام الإجراء.
+            </div>
+
+            <form id="danger-purge-form" class="space-y-4 text-xs text-right max-w-md">
+              <div>
+                <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">يرجى كتابة العبارة التالية بدقة للمتابعة: <strong class="text-rose-600 font-mono">مسح البيانات</strong></label>
+                <input type="text" id="danger-confirm-phrase" autocomplete="off" required placeholder="اكتب العبارة التأكيدية بدقة..." class="w-full bg-slate-50 dark:bg-slate-800 border border-rose-200 dark:border-rose-900 px-3 py-2 rounded-lg focus:outline-none focus:border-rose-500 text-slate-800 dark:text-slate-100 font-bold">
+              </div>
+              <button type="submit" class="py-2.5 px-4 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg shadow-md transition-all">تأكيد عملية مسح وتصفير النظام</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- ==================== SYSTEM SETTINGS PAGE ==================== -->
+        <section id="settings-page" class="space-y-6 hidden">
+          <!-- Page Header -->
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white heading-display">إعدادات النظام والربط السحابي</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400">ربط البرنامج بقاعدة بيانات Google Sheets وحفظ بيانات المتجر والتحقق.</p>
+          </div>
+
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl shadow-sm max-w-2xl space-y-4">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-2">تفاصيل قاعدة البيانات وإعدادات الدخول</h3>
+            <form id="settings-form" class="space-y-4 text-xs text-right">
+              <div>
+                <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">رابط Google Apps Script Web App API URL</label>
+                <input type="url" id="settings-api-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2.5 rounded-lg focus:outline-none focus:border-indigo-500 font-mono text-left text-slate-800 dark:text-slate-100">
+                <span class="text-[9px] text-slate-400 mt-1 block">اتركه فارغاً للتشغيل في الوضع التجريبي المحلي (Mock Mode) وحفظ البيانات على المتصفح.</span>
+              </div>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="sm:col-span-2">
+                  <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">اسم المعرض / الورشة</label>
+                  <input type="text" id="settings-business-name" required placeholder="الماسة للستائر والديكور" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+                </div>
+                <div>
+                  <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">العملة الافتراضية</label>
+                  <input type="text" id="settings-currency" disabled value="EGP" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg text-slate-400 cursor-not-allowed text-center font-bold">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">رقم هاتف المعرض</label>
+                  <input type="text" id="settings-phone" placeholder="+201018907086" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100 font-mono">
+                </div>
+                <div>
+                  <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">عنوان المقر الرئيسي</label>
+                  <input type="text" id="settings-address" placeholder="القاهرة، مصر" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-100 dark:border-slate-800 pt-4">
+                <div>
+                  <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">البريد الإلكتروني للأدمن (تسجيل الدخول)</label>
+                  <input type="email" id="settings-admin-email" required placeholder="admin@elmasa.com" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100 font-mono">
+                </div>
+                <div>
+                  <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">كلمة المرور للأدمن</label>
+                  <input type="text" id="settings-admin-password" required placeholder="كلمة المرور" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+                </div>
+              </div>
+
+              <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-md transition-all">حفظ البيانات والربط</button>
+            </form>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ==================== DIALOGS & OVERLAYS ==================== -->
+
+  <!-- 1. Add/Edit Customer Modal -->
+  <div id="customer-modal" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 items-center justify-center z-[60] p-4 hidden modal-overlay">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-md rounded-2xl shadow-2xl p-5 space-y-4 modal-content">
+      <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2">
+        <h3 id="cust-modal-title" class="text-sm font-bold text-slate-900 dark:text-white">إضافة عميل جديد</h3>
+        <button id="cust-modal-close" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <form id="cust-form" class="space-y-3.5 text-xs text-right">
+        <input type="hidden" id="cust-id">
+        <div>
+          <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">الاسم الكامل للعميل *</label>
+          <input type="text" id="cust-name" required placeholder="مثال: أحمد رأفت الشافعي" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+        </div>
+        <div>
+          <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">رقم الهاتف الأساسي *</label>
+          <input type="text" id="cust-phone" required placeholder="01001234567" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100 font-mono">
+        </div>
+        <div>
+          <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">رقم هاتف إضافي (اختياري)</label>
+          <input type="text" id="cust-secondary-phone" placeholder="01122334455" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100 font-mono">
+        </div>
+        <div>
+          <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">عنوان شقة التركيب بالتفصيل</label>
+          <input type="text" id="cust-address" placeholder="المنطقة، الشارع، رقم العمارة، رقم الشقة" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+        </div>
+        <div>
+          <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">ملاحظات وطلبات خاصة</label>
+          <textarea id="cust-notes" placeholder="أية ملاحظات أخرى تخص ألوان أو مواعيد التركيب المفضلة..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100 h-16"></textarea>
+        </div>
+        
+        <div class="flex space-x-reverse space-x-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <button type="submit" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow">حفظ البيانات</button>
+          <button type="button" id="cust-cancel-btn" class="flex-1 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-lg hover:bg-slate-50">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. Rich Customer Profile Drawer (slide out) -->
+  <div id="profile-drawer" class="fixed inset-y-0 right-0 w-full max-w-lg bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 shadow-2xl z-50 flex flex-col transition-transform duration-300 translate-x-full no-print">
+    <!-- Header -->
+    <div class="h-16 border-b border-slate-100 dark:border-slate-800 px-6 flex items-center justify-between">
+      <div class="flex items-center space-x-reverse space-x-3">
+        <div class="bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 p-2 rounded-xl">
+          <i data-lucide="user" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white" id="profile-name">اسم العميل</h3>
+          <span class="text-[9px] font-bold text-slate-400 font-mono" id="profile-id">CUST-1001</span>
+        </div>
+      </div>
+      <button id="profile-drawer-close" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+      </button>
+    </div>
+    
+    <!-- Drawer Body -->
+    <div class="flex-1 overflow-y-auto p-6 space-y-6 text-xs text-right">
+      <!-- Details card -->
+      <div class="bg-slate-50 dark:bg-slate-800/40 rounded-2xl p-4 border border-slate-100 dark:border-slate-800/50 space-y-2">
+        <div><strong>الهاتف الأساسي:</strong> <span class="font-mono font-bold" id="profile-phone">-</span></div>
+        <div><strong>الهاتف الإضافي:</strong> <span class="font-mono font-bold text-slate-600 dark:text-slate-400" id="profile-secondary">-</span></div>
+        <div><strong>عنوان الشقة:</strong> <span id="profile-address">-</span></div>
+        <div class="border-t border-slate-200 dark:border-slate-800 pt-2 mt-2">
+          <strong>ملاحظات العميل الخاصة:</strong>
+          <p class="text-slate-500 dark:text-slate-400 mt-1" id="profile-notes">-</p>
+        </div>
+      </div>
+
+      <!-- Financial Statistics summary -->
+      <div class="grid grid-cols-4 gap-2 text-center">
+        <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/50">
+          <h5 class="text-[9px] text-slate-400">الطلبيات</h5>
+          <p class="text-sm font-bold font-mono text-slate-900 dark:text-white mt-0.5" id="profile-stat-orders">0</p>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/50">
+          <h5 class="text-[9px] text-slate-400">الإجمالي</h5>
+          <p class="text-sm font-bold font-mono text-slate-900 dark:text-white mt-0.5" id="profile-stat-total">0</p>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/50">
+          <h5 class="text-[9px] text-emerald-600">المسدد</h5>
+          <p class="text-sm font-bold font-mono text-emerald-600 mt-0.5" id="profile-stat-paid">0</p>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/50">
+          <h5 class="text-[9px] text-rose-500">المتبقي</h5>
+          <p class="text-sm font-bold font-mono text-rose-500 mt-0.5" id="profile-stat-remaining">0</p>
+        </div>
+      </div>
+
+      <!-- Rooms Measurements detail lists -->
+      <div class="space-y-2">
+        <h4 class="font-bold text-slate-500 border-b border-slate-100 dark:border-slate-800 pb-1.5 flex items-center space-x-reverse space-x-1.5">
+          <i data-lucide="ruler" class="w-4 h-4 text-indigo-600"></i>
+          <span>1. مقاسات غرف الشقة التفصيلية</span>
+        </h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="profile-rooms-container">
+          <!-- JS Populated -->
+        </div>
+      </div>
+
+      <!-- Orders histories -->
+      <div class="space-y-2">
+        <h4 class="font-bold text-slate-500 border-b border-slate-100 dark:border-slate-800 pb-1.5 flex items-center space-x-reverse space-x-1.5">
+          <i data-lucide="shopping-bag" class="w-4 h-4 text-indigo-600"></i>
+          <span>2. سجل طلبيات العميل السابقة</span>
+        </h4>
+        <div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-white dark:bg-slate-900">
+          <table class="w-full text-right text-[10px]">
+            <thead>
+              <tr class="bg-slate-50 dark:bg-slate-800 text-slate-400 border-b border-slate-200 dark:border-slate-700">
+                <th class="py-1 px-4">رقم الطلب</th>
+                <th class="py-1 px-4">التاريخ</th>
+                <th class="py-1 px-4 text-center">الحالة</th>
+                <th class="py-1 px-4 text-left">التكلفة</th>
+                <th class="py-1 px-4 text-left">المتبقي</th>
+              </tr>
+            </thead>
+            <tbody id="profile-orders-list">
+              <!-- JS Populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Materials consumed -->
+      <div class="space-y-2">
+        <h4 class="font-bold text-slate-500 border-b border-slate-100 dark:border-slate-800 pb-1.5 flex items-center space-x-reverse space-x-1.5">
+          <i data-lucide="package-check" class="w-4 h-4 text-indigo-600"></i>
+          <span>3. إجمالي الخامات والمواد المستهلكة للعميل</span>
+        </h4>
+        <div class="bg-slate-50 dark:bg-slate-800/20 border border-slate-100 dark:border-slate-800/80 rounded-xl p-2.5 space-y-1.5" id="profile-materials-container">
+          <!-- JS Populated -->
+        </div>
+      </div>
+
+      <!-- Attachments links notes -->
+      <div class="space-y-2">
+        <h4 class="font-bold text-slate-500 border-b border-slate-100 dark:border-slate-800 pb-1.5 flex items-center space-x-reverse space-x-1.5">
+          <i data-lucide="link" class="w-4 h-4 text-indigo-600"></i>
+          <span>4. روابط تصاميم وألوان الستائر المطلوبة</span>
+        </h4>
+        <input type="text" id="profile-ref-links" readonly class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg font-mono text-left focus:outline-none text-slate-700 dark:text-slate-300">
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Add/Edit Order Builder Modal (Large screens) -->
+  <div id="order-modal" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 items-center justify-center z-50 p-4 hidden modal-overlay">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-4xl rounded-2xl shadow-2xl p-5 space-y-4 max-h-[90vh] overflow-y-auto modal-content">
+      <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2">
+        <h3 id="order-modal-title" class="text-sm font-bold text-slate-900 dark:text-white">إنشاء طلب ومقاسات جديد</h3>
+        <button id="order-modal-close" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      
+      <form id="order-form" class="space-y-5 text-xs text-right">
+        <input type="hidden" id="order-id">
+        
+        <!-- General fields block -->
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">العميل *</label>
+            <div class="flex space-x-reverse space-x-1">
+              <select id="order-customer-select" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+                <!-- Customers list -->
+              </select>
+              <button type="button" id="order-quick-add-cust-btn" class="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shrink-0 flex items-center justify-center" title="إضافة عميل سريع">
+                <i data-lucide="user-plus" class="w-4.5 h-4.5"></i>
+              </button>
+            </div>
+          </div>
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">تاريخ الطلب *</label>
+            <input type="date" id="order-date" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono text-slate-800 dark:text-slate-100">
+          </div>
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">تاريخ التسليم المتوقع</label>
+            <input type="date" id="order-delivery-date" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono text-slate-800 dark:text-slate-100">
+          </div>
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">تاريخ التركيب المجدول</label>
+            <input type="date" id="order-installation-date" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono text-slate-800 dark:text-slate-100">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-slate-100 dark:border-slate-800 pt-3">
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">الفني المكلف بالتركيب</label>
+            <select id="order-technician-select" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+              <!-- Technicians -->
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">حالة الطلبية *</label>
+            <select id="order-status-select" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+              <option value="New">جديد</option>
+              <option value="Measurements Taken">تم رفع القياسات</option>
+              <option value="Materials Prepared">الخامات جاهزة</option>
+              <option value="Sewing In Progress">جاري التفصيل والقص</option>
+              <option value="Ready For Installation">جاهز للتركيب</option>
+              <option value="Installed">تم التركيب</option>
+              <option value="Delivered">تم التسليم</option>
+              <option value="Closed">مغلق ومسلم</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">ملاحظات الفاتورة العامة</label>
+            <input type="text" id="order-notes" placeholder="أية ملاحظات أو تعليمات خاصة..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+          </div>
+        </div>
+
+        <!-- Rooms Measurements inputs builder -->
+        <div class="border border-slate-200 dark:border-slate-800 rounded-2xl p-4 bg-slate-50/50 dark:bg-slate-900/30 space-y-3">
+          <h4 class="font-bold text-slate-700 dark:text-slate-200 flex items-center space-x-reverse space-x-1.5 mb-2">
+            <i data-lucide="ruler" class="w-4.5 h-4.5 text-indigo-600"></i>
+            <span>1. منشئ مقاسات الغرف للوحدة/الشقة</span>
+          </h4>
+          <div class="grid grid-cols-2 sm:grid-cols-7 gap-2 items-end">
+            <div>
+              <label class="block text-slate-400 text-[10px] mb-1">اسم الغرفة</label>
+              <input type="text" id="room-name-input" list="room-types" placeholder="غرفة نوم" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1.5 rounded focus:outline-none text-slate-800 dark:text-slate-100">
+              <datalist id="room-types">
+                <option value="غرفة المعيشة (Living Room)"></option>
+                <option value="غرفة النوم الرئيسية"></option>
+                <option value="غرفة الأطفال (Children Room)"></option>
+                <option value="الريسيبشن الكبير"></option>
+                <option value="صالون الاستقبال"></option>
+                <option value="المطبخ"></option>
+                <option value="الحمام"></option>
+              </datalist>
+            </div>
+            <div>
+              <label class="block text-slate-400 text-[10px] mb-1">العرض (متر)</label>
+              <input type="number" step="0.01" id="room-width-input" placeholder="3.5" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1.5 rounded focus:outline-none font-mono">
+            </div>
+            <div>
+              <label class="block text-slate-400 text-[10px] mb-1">الارتفاع (متر)</label>
+              <input type="number" step="0.01" id="room-height-input" placeholder="2.8" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1.5 rounded focus:outline-none font-mono">
+            </div>
+            <div>
+              <label class="block text-slate-400 text-[10px] mb-1">نوع الموديل</label>
+              <input type="text" id="room-curtain-input" placeholder="ستارة حلقات" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1.5 rounded focus:outline-none text-slate-800 dark:text-slate-100">
+            </div>
+            <div>
+              <label class="block text-slate-400 text-[10px] mb-1">خامة القماش</label>
+              <input type="text" id="room-fabric-input" placeholder="كتان تركي" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1.5 rounded focus:outline-none text-slate-800 dark:text-slate-100">
+            </div>
+            <div>
+              <label class="block text-slate-400 text-[10px] mb-1">اللون المطلوب</label>
+              <input type="text" id="room-color-input" placeholder="بيج فاتح" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1.5 rounded focus:outline-none text-slate-800 dark:text-slate-100">
+            </div>
+            <div class="flex space-x-reverse space-x-1 sm:col-span-1 col-span-2">
+              <div class="w-1/2">
+                <label class="block text-slate-400 text-[10px] mb-1">العدد</label>
+                <input type="number" id="room-qty-input" value="1" min="1" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1.5 rounded focus:outline-none font-mono">
+              </div>
+              <button type="button" id="builder-add-room-btn" class="w-1/2 py-2 bg-indigo-600 text-white font-bold rounded hover:bg-indigo-700">أضف</button>
+            </div>
+          </div>
+
+          <!-- تفاصيل فنية وتقدير خامات تلقائي -->
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+            <div class="grid grid-cols-3 gap-1 sm:col-span-2">
+              <div>
+                <label class="block text-slate-400 text-[10px] mb-1">معامل الكشكشة</label>
+                <select id="room-multiplier-select" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1 rounded focus:outline-none text-[11px] text-slate-800 dark:text-slate-100">
+                  <option value="1">1x (بدون كشكشة)</option>
+                  <option value="1.5">1.5x</option>
+                  <option value="2">2x</option>
+                  <option value="2.5" selected>2.5x (قياسي)</option>
+                  <option value="3">3x (ثقيل)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-slate-400 text-[10px] mb-1">نوع التثبيت</label>
+                <select id="room-install-type" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1 rounded focus:outline-none text-[11px] text-slate-800 dark:text-slate-100">
+                  <option value="Wall" selected>حائط (Wall)</option>
+                  <option value="Ceiling">سقف (Ceiling)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-slate-400 text-[10px] mb-1">سحب الستارة</label>
+                <select id="room-pull-direction" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1 rounded focus:outline-none text-[11px] text-slate-800 dark:text-slate-100">
+                  <option value="Two Sides" selected>يمين ويسار (اتجاهين)</option>
+                  <option value="One Side">اتجاه واحد</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-1 sm:col-span-2">
+              <div>
+                <label class="block text-slate-400 text-[10px] mb-1">زيادة الماسورة (سم)</label>
+                <input type="number" id="room-side-ext" value="20" min="0" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1 rounded focus:outline-none font-mono text-[11px]">
+              </div>
+              <div class="flex items-center space-x-reverse space-x-2 pt-4 col-span-2">
+                <label class="inline-flex items-center text-xs text-slate-700 dark:text-slate-300 font-semibold cursor-pointer">
+                  <input type="checkbox" id="room-layer-sheer" class="rounded border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500 mr-1.5">
+                  <span class="mr-1">شيفون (Sheer)</span>
+                </label>
+                <label class="inline-flex items-center text-xs text-slate-700 dark:text-slate-300 font-semibold cursor-pointer">
+                  <input type="checkbox" id="room-layer-blackout" class="rounded border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500 mr-1.5">
+                  <span class="mr-1">بلاك أوت (Blackout)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- تقدير الخامات من المخزن تلقائياً -->
+          <div class="p-3 bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100/60 dark:border-indigo-900/30 rounded-xl space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-indigo-700 dark:text-indigo-400">حساب الخامات والمستلزمات وإسقاطها في الفاتورة تلقائياً</span>
+              <label class="inline-flex items-center text-[10px] text-slate-500 cursor-pointer">
+                <input type="checkbox" id="room-auto-estimate" checked class="rounded border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500 mr-1">
+                <span class="mr-1">تفعيل الحساب والخصم التلقائي</span>
+              </label>
+            </div>
+            
+            <div id="estimator-selectors-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px]">
+              <div>
+                <label class="block text-slate-500 mb-0.5">القماش الأساسي</label>
+                <select id="est-main-fabric" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1 rounded text-slate-800 dark:text-slate-100">
+                  <option value="">-- اختر من المخزن --</option>
+                </select>
+              </div>
+              <div id="est-sheer-container" class="hidden">
+                <label class="block text-slate-500 mb-0.5">قماش الشيفون</label>
+                <select id="est-sheer-fabric" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1 rounded text-slate-800 dark:text-slate-100">
+                  <option value="">-- اختر من المخزن --</option>
+                </select>
+              </div>
+              <div id="est-blackout-container" class="hidden">
+                <label class="block text-slate-500 mb-0.5">قماش البلاك أوت</label>
+                <select id="est-blackout-fabric" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1 rounded text-slate-800 dark:text-slate-100">
+                  <option value="">-- اختر من المخزن --</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-slate-500 mb-0.5">شريط الستارة</label>
+                <select id="est-tape" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1 rounded text-slate-800 dark:text-slate-100">
+                  <option value="">-- اختر من المخزن --</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-slate-500 mb-0.5">المواسير</label>
+                <select id="est-rod" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1 rounded text-slate-800 dark:text-slate-100">
+                  <option value="">-- اختر من المخزن --</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-slate-500 mb-0.5">الحلقات</label>
+                <select id="est-rings" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1 rounded text-slate-800 dark:text-slate-100">
+                  <option value="">-- اختر من المخزن --</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-slate-500 mb-0.5">الحوامل (Brackets)</label>
+                <select id="est-brackets" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1 rounded text-slate-800 dark:text-slate-100">
+                  <option value="">-- اختر من المخزن --</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div id="builder-rooms-container" class="mt-2.5 max-h-40 overflow-y-auto">
+            <!-- JS Populated rooms table -->
+          </div>
+        </div>
+
+        <!-- Materials list builder -->
+        <div class="border border-slate-200 dark:border-slate-800 rounded-2xl p-4 bg-slate-50/50 dark:bg-slate-900/30 space-y-3">
+          <h4 class="font-bold text-slate-700 dark:text-slate-200 flex items-center space-x-reverse space-x-1.5 mb-2">
+            <i data-lucide="package-open" class="w-4.5 h-4.5 text-indigo-600"></i>
+            <span>2. الخامات والمواد المستهلكة في تفصيل الستائر</span>
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 items-end">
+            <div class="sm:col-span-2">
+              <label class="block text-slate-400 text-[10px] mb-1">المنتج من المخزن</label>
+              <select id="material-item-select" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1.5 rounded focus:outline-none text-slate-800 dark:text-slate-100">
+                <!-- JS populated items -->
+              </select>
+            </div>
+            <div>
+              <label class="block text-slate-400 text-[10px] mb-1">الكمية المسحوبة</label>
+              <input type="number" step="0.1" id="material-qty-input" placeholder="مثال: 15" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-1.5 rounded focus:outline-none font-mono text-left">
+            </div>
+            <button type="button" id="builder-add-material-btn" class="py-2 bg-indigo-600 text-white font-bold rounded hover:bg-indigo-700">تسجيل سحب الخامة</button>
+          </div>
+          <div id="builder-materials-container" class="mt-2.5 max-h-40 overflow-y-auto">
+            <!-- JS Populated materials table -->
+          </div>
+        </div>
+
+        <!-- Labor and Additional costs grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 border-t border-slate-100 dark:border-slate-800 pt-4">
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">أجر خياطة وتفصيل (EGP)</label>
+            <input type="number" id="order-sewing-cost" required value="0" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono text-left text-slate-800 dark:text-slate-100">
+          </div>
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">أجر تركيب (EGP)</label>
+            <input type="number" id="order-install-cost" required value="0" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono text-left text-slate-800 dark:text-slate-100">
+          </div>
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">أجور/أعباء إضافية (EGP)</label>
+            <input type="number" id="order-extra-cost" required value="0" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono text-left text-slate-800 dark:text-slate-100">
+          </div>
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">مبلغ العربون المسدد (EGP)</label>
+            <input type="number" id="order-paid-amount" required value="0" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono text-left text-slate-800 dark:text-slate-100">
+          </div>
+        </div>
+
+        <!-- Automatic calculated output details -->
+        <div class="bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/60 p-4 rounded-2xl flex flex-col sm:flex-row justify-between text-xs space-y-2 sm:space-y-0 text-slate-800 dark:text-slate-300 font-mono">
+          <div>تكلفة الخامات: <span id="total-materials-cost" class="font-bold text-slate-900 dark:text-white">0 EGP</span></div>
+          <div>إجمالي التكلفة الكلية: <span id="total-order-calculated" class="font-bold text-slate-900 dark:text-white text-sm">0 EGP</span></div>
+          <div class="text-rose-500">المتبقي للتحصيل: <span id="remaining-order-calculated" class="font-bold text-sm">0 EGP</span></div>
+        </div>
+
+        <!-- Submit cancel buttons -->
+        <div class="flex space-x-reverse space-x-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <button type="submit" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow">حفظ الطلبية وتعديل المخزن</button>
+          <button type="button" id="order-cancel-btn" class="flex-1 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-lg hover:bg-slate-50">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. Payment Add Modal -->
+  <div id="payment-modal" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 items-center justify-center z-50 p-4 hidden modal-overlay">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-sm rounded-2xl shadow-2xl p-5 space-y-4 modal-content">
+      <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white">تسجيل دفعة سداد مالية</h3>
+        <button id="payment-modal-close" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <form id="payment-form" class="space-y-3.5 text-xs text-right">
+        <input type="hidden" id="payment-order-id">
+        <div>
+          <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">العميل</label>
+          <input type="text" id="payment-cust-name" disabled class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg text-slate-500 cursor-not-allowed">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">التكلفة الإجمالية</label>
+            <input type="text" id="payment-total-cost" disabled class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg text-slate-500 cursor-not-allowed font-mono text-left">
+          </div>
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">المتبقي الحالي</label>
+            <input type="text" id="payment-remaining" disabled class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg text-slate-500 cursor-not-allowed font-mono text-left">
+          </div>
+        </div>
+        <div>
+          <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">قيمة السداد المحصلة *</label>
+          <input type="number" step="0.01" id="payment-amount" required placeholder="0.00" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 font-bold text-indigo-600 font-mono text-left">
+        </div>
+        <div>
+          <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">طريقة السداد</label>
+          <select id="payment-method" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+            <option value="Cash">نقدي (Cash)</option>
+            <option value="InstaPay">إنستاباي (InstaPay)</option>
+            <option value="Vodafone Cash">فودافون كاش</option>
+            <option value="Bank Transfer">تحويل بنكي</option>
+          </select>
+        </div>
+
+        <div class="flex space-x-reverse space-x-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <button type="submit" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow">سحب وتوثيق العملية</button>
+          <button type="button" id="payment-cancel-btn" class="flex-1 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-lg hover:bg-slate-50">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. Add/Edit Inventory Item Modal -->
+  <div id="inventory-modal" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 items-center justify-center z-50 p-4 hidden modal-overlay">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-md rounded-2xl shadow-2xl p-5 space-y-4 modal-content">
+      <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2">
+        <h3 id="inv-modal-title" class="text-sm font-bold text-slate-900 dark:text-white">إضافة منتج مخزني</h3>
+        <button id="inv-modal-close" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <form id="inv-form" class="space-y-3.5 text-xs text-right">
+        <input type="hidden" id="inv-id">
+        <div>
+          <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">اسم المنتج / الخامة *</label>
+          <input type="text" id="inv-name" required placeholder="مثال: قماش كتان تركي بيج" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100 font-bold">
+        </div>
+        
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">القسم بالفئة *</label>
+            <select id="inv-category" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+              <option value="Fabric">أقمشة وثياب</option>
+              <option value="Accessories">إكسسوارات خياطة</option>
+              <option value="Hardware">مسامير وأدوات مواسير</option>
+              <option value="Services">خدمات وأجور</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">وحدة القياس</label>
+            <select id="inv-unit" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+              <option value="Meter">متر (Meter)</option>
+              <option value="Piece">حبة/قطعة (Piece)</option>
+              <option value="Box">علبة (Box)</option>
+              <option value="Room">غرفة (Room)</option>
+              <option value="Trip">زيارة/فني (Trip)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">تكلفة الشراء (EGP)</label>
+            <input type="number" step="0.01" id="inv-buy-price" required placeholder="0.00" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono text-left">
+          </div>
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">سعر البيع للعميل (EGP)</label>
+            <input type="number" step="0.01" id="inv-sell-price" required placeholder="0.00" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono text-left font-bold">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">الرصيد المتاح حالياً</label>
+            <input type="number" step="0.1" id="inv-qty-available" required placeholder="0.0" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono text-left">
+          </div>
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">حد الأمان (تنبيه النقص)</label>
+            <input type="number" step="0.1" id="inv-min-qty" required placeholder="مثال: 15" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono text-left">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">المورد الأساسي</label>
+            <input type="text" id="inv-supplier" placeholder="اسم المورد" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+          </div>
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">كود الباركود</label>
+            <input type="text" id="inv-barcode" placeholder="الباركود" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono text-left">
+          </div>
+        </div>
+
+        <div class="flex space-x-reverse space-x-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <button type="submit" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow">حفظ المنتج</button>
+          <button type="button" id="inv-cancel-btn" class="flex-1 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-lg hover:bg-slate-50">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 6. Manual Stock movement adjustment overlay modal -->
+  <div id="adjust-modal" class="fixed inset-0 bg-slate-900/60 dark:bg-slate-950/80 items-center justify-center z-50 p-4 hidden modal-overlay">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-sm rounded-2xl shadow-2xl p-5 space-y-4 modal-content">
+      <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-2">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white">جرد وتسوية حركة مخزنية</h3>
+        <button id="adjust-modal-close" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <form id="adjust-form" class="space-y-3.5 text-xs text-right">
+        <div>
+          <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">المنتج من المخزن *</label>
+          <select id="adjust-item-select" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+            <!-- Items -->
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">نوع الحركة</label>
+            <select id="adjust-type" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+              <option value="Incoming">وارد (شراء من مورد)</option>
+              <option value="Outgoing">صادر يدوي (تسوية عجز/تالف)</option>
+              <option value="Manual Adjustment">تسوية يدوية (تغيير رصيد)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">الكمية للتسوية *</label>
+            <input type="number" step="0.1" id="adjust-qty" required placeholder="مثال: 20" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 font-mono text-left">
+          </div>
+        </div>
+        <div>
+          <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">سبب التعديل / الجرد</label>
+          <input type="text" id="adjust-reason" required placeholder="مثال: شراء لفافات جديدة" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-lg focus:outline-none focus:border-indigo-500 text-slate-800 dark:text-slate-100">
+        </div>
+
+        <div class="flex space-x-reverse space-x-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <button type="submit" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow">تنفيذ التسوية</button>
+          <button type="button" id="adjust-cancel-btn" class="flex-1 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-lg hover:bg-slate-50">إلغاء</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 7. Session Admin Login Overlay blocking user interface initially -->
+  <div id="login-overlay" class="fixed inset-0 bg-[#0f172a]/95 z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-sm rounded-2xl p-6 space-y-4 shadow-2xl text-right text-xs">
+      <div class="text-center space-y-2 mb-3">
+        <div class="inline-block bg-indigo-600 text-white p-3.5 rounded-full shadow-lg">
+          <i data-lucide="shield-check" class="w-7 h-7"></i>
+        </div>
+        <h2 class="text-base font-bold text-slate-900 dark:text-white" id="login-business-title">الماسة للستائر والديكور</h2>
+        <span class="text-[10px] text-slate-400 block uppercase font-mono tracking-wider">Enterprise ERP Login</span>
+      </div>
+      
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">البريد الإلكتروني للتحقق</label>
+          <input type="email" id="login-email" required placeholder="admin@elmasa.com" value="admin@elmasa.com" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2.5 rounded-lg focus:outline-none focus:border-indigo-500 font-mono text-left text-slate-800 dark:text-slate-100">
+        </div>
+        <div>
+          <label class="block text-slate-500 dark:text-slate-400 font-bold mb-1">كلمة المرور</label>
+          <input type="password" id="login-password" required placeholder="••••••••" value="admin" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2.5 rounded-lg focus:outline-none focus:border-indigo-500 font-mono text-left text-slate-800 dark:text-slate-100">
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-md transition-all">التحقق وتأكيد الدخول</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 8. Thermal / A4 Print Area Layout (Hidden normally) -->
+  <div id="invoice-print-area" class="print-area">
+    <!-- Built dynamically on printer click -->
+  </div>
+
+  <!-- 9. Toast Notification Popups container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none w-80 max-w-[90vw]">
+    <!-- Generated dynamically -->
+  </div>
+
+  <!-- 10. Loader overlay screen -->
+  <div id="loader-overlay" class="fixed inset-0 bg-slate-950/50 z-[100] items-center justify-center flex-col space-y-3 hidden">
+    <div class="loader-spinner"></div>
+    <span class="text-xs font-bold text-white tracking-wide" id="loader-text">جاري مزامنة قاعدة البيانات...</span>
+  </div>
+
+  <!-- JS Module Layers -->
+  <script src="src/js/api.js"></script>
+  <script src="src/js/app.js"></script>
+  <script src="src/js/dashboard.js"></script>
+  <script src="src/js/customers.js"></script>
+  <script src="src/js/orders.js"></script>
+  <script src="src/js/inventory.js"></script>
+  <script src="src/js/expenses.js"></script>
+  <script src="src/js/reports.js"></script>
+</body>
+</html>
