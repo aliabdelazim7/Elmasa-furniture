@@ -53,7 +53,25 @@ function initializeDatabase() {
     let sheet = ss.getSheetByName(sheetName);
     if (!sheet) {
       sheet = ss.insertSheet(sheetName);
-      const headers = SHEETS_SCHEMA[sheetName];
+    }
+    
+    const headers = SHEETS_SCHEMA[sheetName];
+    const lastCol = sheet.getLastColumn();
+    let needsUpdate = false;
+    
+    if (lastCol !== headers.length) {
+      needsUpdate = true;
+    } else {
+      const currentHeaders = sheet.getRange(1, 1, 1, headers.length).getValues()[0];
+      for (let i = 0; i < headers.length; i++) {
+        if (currentHeaders[i] !== headers[i]) {
+          needsUpdate = true;
+          break;
+        }
+      }
+    }
+    
+    if (needsUpdate) {
       sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
       sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#f3f4f6");
       sheet.setFrozenRows(1);
