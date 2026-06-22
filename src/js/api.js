@@ -14,8 +14,8 @@ const defaultSettings = {
   address: "القاهرة، مصر",
   phone: "+201018907086",
   currency: "EGP",
-  adminEmail: "admin@elmasa.com",
-  adminPassword: "elmasa_admin"
+  adminEmail: "elmasa_admin_secure@elmasa.com",
+  adminPassword: "ElmasaAdminSecure2026!#"
 };
 
 // Initial Realistic Curtain Workshop Demo Database (Arabic localized)
@@ -71,8 +71,8 @@ const demoDatabase = {
     { "Key": "Address", "Value": "القاهرة، مصر" },
     { "Key": "Phone Number", "Value": "+201018907086" },
     { "Key": "Currency", "Value": "EGP" },
-    { "Key": "Admin Email", "Value": "admin@elmasa.com" },
-    { "Key": "Admin Password", "Value": "admin" }
+    { "Key": "Admin Email", "Value": "elmasa_admin_secure@elmasa.com" },
+    { "Key": "Admin Password", "Value": "ElmasaAdminSecure2026!#" }
   ]
 };
 
@@ -81,7 +81,7 @@ class ApiService {
     this.settings = this.loadConfig();
     this.db = this.loadLocalDb();
     this.syncQueue = this.loadSyncQueue();
-    this.isMockMode = (localStorage.getItem("elmasa_demo_session") === "true") || !this.settings.webAppUrl;
+    this.isMockMode = (localStorage.getItem("elmasa_session_active") !== "true") || (localStorage.getItem("elmasa_demo_session") === "true") || !this.settings.webAppUrl;
     this.syncListeners = [];
     this.isSyncing = false;
 
@@ -110,7 +110,7 @@ class ApiService {
   saveConfig(newSettings) {
     this.settings = { ...this.settings, ...newSettings };
     localStorage.setItem(API_CONFIG_KEY, JSON.stringify(this.settings));
-    this.isMockMode = (localStorage.getItem("elmasa_demo_session") === "true") || !this.settings.webAppUrl;
+    this.isMockMode = (localStorage.getItem("elmasa_session_active") !== "true") || (localStorage.getItem("elmasa_demo_session") === "true") || !this.settings.webAppUrl;
   }
 
   loadLocalDb() {
@@ -567,8 +567,8 @@ class ApiService {
       { Key: "Address", Value: "القاهرة، مصر" },
       { Key: "Phone Number", Value: "+201018907086" },
       { Key: "Currency", Value: "EGP" },
-      { Key: "Admin Email", Value: "admin@elmasa.com" },
-      { Key: "Admin Password", Value: "admin" }
+      { Key: "Admin Email", Value: "elmasa_admin_secure@elmasa.com" },
+      { Key: "Admin Password", Value: "ElmasaAdminSecure2026!#" }
     ];
     this.settings = defaultSettings;
     localStorage.setItem(API_CONFIG_KEY, JSON.stringify(defaultSettings));

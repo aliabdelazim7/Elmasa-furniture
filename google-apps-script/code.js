@@ -65,8 +65,8 @@ function initializeDatabase() {
       ["Address", "القاهرة، مصر"],
       ["Phone Number", "+201018907086"],
       ["Currency", "EGP"],
-      ["Admin Email", "admin@elmasa.com"],
-      ["Admin Password", "elmasa_admin"],
+      ["Admin Email", "elmasa_admin_secure@elmasa.com"],
+      ["Admin Password", "ElmasaAdminSecure2026!#"],
       ["Initialized", "true"]
     ];
     settingsSheet.getRange(2, 1, defaultSettings.length, 2).setValues(defaultSettings);
@@ -625,8 +625,8 @@ function handleClearDatabase(payload) {
     ["Address", "القاهرة، مصر"],
     ["Phone Number", "+201018907086"],
     ["Currency", "EGP"],
-    ["Admin Email", "admin@elmasa.com"],
-    ["Admin Password", "admin"],
+    ["Admin Email", "elmasa_admin_secure@elmasa.com"],
+    ["Admin Password", "ElmasaAdminSecure2026!#"],
     ["Initialized", "true"]
   ];
   settingsSheet.getRange(2, 1, defaultSettings.length, 2).setValues(defaultSettings);

@@ -229,13 +229,14 @@ function initGlobalEvents() {
       showToast("تم الدخول في وضع التجربة بنجاح (قاعدة بيانات محلية آمنة)", "success");
       initAuth();
       startActivityTracker();
+      await syncDatabase(true);
       return;
     }
 
     // 2. Handle Admin Mode login
     const config = api.loadConfig();
-    const correctEmail = config.adminEmail || "admin@elmasa.com";
-    const correctPass = config.adminPassword || "elmasa_admin";
+    const correctEmail = config.adminEmail || "elmasa_admin_secure@elmasa.com";
+    const correctPass = config.adminPassword || "ElmasaAdminSecure2026!#";
 
     let hashedPass = pass;
     const isHashed = /^[a-f0-9]{64}$/i.test(correctPass);
@@ -250,6 +251,7 @@ function initGlobalEvents() {
       showToast("تم تسجيل دخول المسؤول بنجاح (ربط سحابي حقيقي)", "success");
       initAuth();
       startActivityTracker();
+      await syncDatabase(false);
     } else {
       showToast("خطأ في البريد الإلكتروني أو كلمة المرور!", "error");
     }
@@ -259,18 +261,7 @@ function initGlobalEvents() {
     const emailInput = document.getElementById("login-email");
     const passInput = document.getElementById("login-password");
     if (emailInput && passInput) {
-      if (mode === "admin") {
-        emailInput.value = "admin@elmasa.com";
-        const config = api.loadConfig();
-        const correctPass = config.adminPassword || "elmasa_admin";
-        const isHashed = /^[a-f0-9]{64}$/i.test(correctPass);
-        if (isHashed) {
-          passInput.value = "";
-          passInput.placeholder = "أدخل كلمة مرور المسؤول الخاصة بك";
-        } else {
-          passInput.value = correctPass;
-        }
-      } else if (mode === "demo") {
+      if (mode === "demo") {
         emailInput.value = "demo@elmasa.com";
         passInput.value = "elmasa_demo";
       }
@@ -581,8 +572,8 @@ function loadSettingsFromConfig() {
   if (nameIn) nameIn.value = window.appState.settings.businessName;
   if (addrIn) addrIn.value = window.appState.settings.address;
   if (phoneIn) phoneIn.value = window.appState.settings.phone;
-  if (emailIn) emailIn.value = config.adminEmail || "admin@elmasa.com";
-  if (passIn) passIn.value = config.adminPassword || "admin";
+  if (emailIn) emailIn.value = config.adminEmail || "elmasa_admin_secure@elmasa.com";
+  if (passIn) passIn.value = config.adminPassword || "ElmasaAdminSecure2026!#";
 }
 
 /**
