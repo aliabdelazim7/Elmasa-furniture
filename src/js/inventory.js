@@ -281,6 +281,15 @@ async function handleItemSubmit(e) {
     return;
   }
 
+  if (buy < 0 || sell < 0 || qty < 0 || min < 0) {
+    showToast("لا يمكن إدخال أسعار أو كميات سالبة!", "error");
+    return;
+  }
+
+  if (sell < buy && category !== "Services") {
+    showToast("تحذير: سعر البيع للعميل أقل من تكلفة الشراء (هامش ربح سالب)!", "warning");
+  }
+
   showLoader("جاري حفظ بيانات المنتج...");
 
   try {
@@ -372,6 +381,16 @@ async function handleAdjustSubmit(e) {
   if (!itemId || isNaN(qty) || qty <= 0) {
     showToast("يرجى ملء الحقول واختيار كمية صحيحة موجبة", "warning");
     return;
+  }
+
+  const db = window.appState.db;
+  const item = db.InventoryItems.find(p => p["Item ID"] === itemId);
+  if (type === "Outgoing" && item) {
+    const avail = parseFloat(item["Quantity Available"]) || 0;
+    if (qty > avail) {
+      showToast(`لا يمكن سحب كمية أكبر من المتوفر بالمخزن! (المتوفر: ${avail})`, "error");
+      return;
+    }
   }
 
   showLoader("جاري تسجيل الحركة وتعديل المخزون...");

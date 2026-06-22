@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("order-cancel-btn")?.addEventListener("click", closeOrderModal);
   
   document.getElementById("order-form")?.addEventListener("submit", handleOrderSubmit);
+  document.getElementById("order-delete-btn")?.addEventListener("click", handleOrderDelete);
 
   // Search and Filter listeners
   document.getElementById("order-search-input")?.addEventListener("input", () => {
@@ -419,6 +420,7 @@ window.openOrderModal = function(orderId = null) {
 
   if (orderId) {
     title.textContent = "تعديل تفاصيل الطلب";
+    document.getElementById("order-delete-btn")?.classList.remove("hidden");
     const o = db.Orders.find(item => item["Order ID"] === orderId);
     if (o) {
       document.getElementById("order-id").value = o["Order ID"];
@@ -463,9 +465,42 @@ window.openOrderModal = function(orderId = null) {
         itemId: m["Item ID"],
         qty: m["Quantity Used"]
       }));
+
+      // Render existing payments list for editing/deletion
+      const orderPayments = (db.Payments || []).filter(p => p["Order ID"] === orderId);
+      const paymentsSec = document.getElementById("order-modal-payments-section");
+      const paymentsList = document.getElementById("order-modal-payments-list");
+      if (paymentsSec && paymentsList) {
+        if (orderPayments.length > 0) {
+          paymentsSec.classList.remove("hidden");
+          paymentsList.innerHTML = orderPayments.map(p => `
+            <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-850 p-2 rounded-lg text-[10px]">
+              <div>
+                <span class="font-bold text-slate-800 dark:text-slate-200 font-mono">${formatCurrency(p["Amount"])}</span>
+                <span class="text-slate-400 mx-1">|</span>
+                <span class="text-slate-500">${translatePaymentMethod(p["Payment Method"])}</span>
+              </div>
+              <div class="flex items-center space-x-reverse space-x-2">
+                <span class="text-slate-400 font-mono">${p["Date"]}</span>
+                <button type="button" onclick="window.deletePaymentItem('${p["Payment ID"]}', '${orderId}')" class="p-1 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded" title="حذف الدفعة">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+          `).join("");
+        } else {
+          paymentsSec.classList.add("hidden");
+          paymentsList.innerHTML = "";
+        }
+      }
     }
   } else {
     title.textContent = "إنشاء طلب تفصيل جديد";
+    document.getElementById("order-delete-btn")?.classList.add("hidden");
+    document.getElementById("order-paid-amount").disabled = false;
+    // Hide payments section in new order mode
+    const paymentsSec = document.getElementById("order-modal-payments-section");
+    if (paymentsSec) paymentsSec.classList.add("hidden");
     document.getElementById("order-date").value = getLocalDateString();
     document.getElementById("order-sewing-cost").value = 0;
     document.getElementById("order-install-cost").value = 0;
@@ -818,14 +853,51 @@ async function handleOrderSubmit(e) {
   const sewing = parseFloat(document.getElementById("order-sewing-cost").value) || 0;
   const install = parseFloat(document.getElementById("order-install-cost").value) || 0;
   const extra = parseFloat(document.getElementById("order-extra-cost").value) || 0;
+  
+  if (sewing < 0 || install < 0 || extra < 0) {
+    showToast("لا يمكن إدخال قيم تكاليف سالبة!", "error");
+    return;
+  }
+  
   const totalCost = materialsCost + sewing + install + extra;
   
   // Paid amount calculation: if editing, keep original paid. If new, use paid input
   let paidAmount = originalPaidAmount;
   if (!id) {
     paidAmount = parseFloat(document.getElementById("order-paid-amount").value) || 0;
+    if (paidAmount < 0) {
+      showToast("لا يمكن إدخال عربون بقيمة سالبة!", "error");
+      return;
+    }
+    if (paidAmount > totalCost) {
+      showToast("قيمة العربون المدفوع لا يمكن أن تتجاوز التكلفة الإجمالية للطلب!", "error");
+      return;
+    }
   }
   const remainingAmount = Math.max(0, totalCost - paidAmount);
+
+  // Check inventory stock warning (non-blocking, warning only)
+  let stockWarnings = [];
+  materialsRows.forEach(m => {
+    const item = db.InventoryItems.find(p => p["Item ID"] === m["Item ID"]);
+    if (item && item["Item Category"] !== "Services") {
+      const avail = parseFloat(item["Quantity Available"]) || 0;
+      if (avail < m["Quantity Used"]) {
+        stockWarnings.push(`${item["Item Name"]} (المتاح: ${avail}, المطلوب: ${m["Quantity Used"]})`);
+      }
+    }
+  });
+
+  if (stockWarnings.length > 0) {
+    showToast("تنبيه: المواد التالية لا يتوفر منها رصيد كاف في المخزن: \n" + stockWarnings.join(", "), "warning");
+  }
+
+  // Prevent double submission: disable submit buttons
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = "جاري الحفظ...";
+  }
 
   showLoader("جاري حفظ الفاتورة وتحديث المخازن...");
 
@@ -882,6 +954,33 @@ async function handleOrderSubmit(e) {
     await syncDatabase(true);
   } catch (err) {
     showToast(`فشل حفظ الطلبية: ${err.message}`, "error");
+    const submitBtn = document.querySelector('#order-form button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "حفظ الطلبية وتعديل المخزن";
+    }
+  } finally {
+    hideLoader();
+  }
+}
+
+async function handleOrderDelete() {
+  const id = document.getElementById("order-id").value;
+  if (!id) return;
+
+  if (!confirm("تحذير: هل أنت متأكد من رغبتك في حذف هذا الطلب نهائياً؟ \nسيؤدي ذلك إلى حذف كافة الغرف والمدفوعات المرتبطة به واسترجاع الخامات للمخازن!")) {
+    return;
+  }
+
+  showLoader("جاري حذف الطلبية وتعديل المخازن...");
+
+  try {
+    await api.deleteOrder(id);
+    closeOrderModal();
+    showToast("تم حذف الطلب واستعادة الخامات للمخزن بنجاح", "success");
+    await syncDatabase(true);
+  } catch (err) {
+    showToast(`فشل حذف الطلب: ${err.message}`, "error");
   } finally {
     hideLoader();
   }
@@ -1042,4 +1141,26 @@ function translatePaymentMethod(method) {
   };
   return map[method] || method;
 }
+
+window.deletePaymentItem = async function(paymentId, orderId) {
+  if (!confirm("هل أنت متأكد من رغبتك في حذف دفعة السداد هذه نهائياً؟ \nسيؤدي ذلك إلى إعادة خصمها من المبلغ المسدد وزيادة المتبقي للتحصيل.")) {
+    return;
+  }
+  
+  showLoader("جاري حذف دفعة السداد وتعديل الحسابات...");
+  
+  try {
+    await api.deletePayment(paymentId);
+    showToast("تم حذف دفعة السداد وتحديث الحسابات بنجاح", "success");
+    await syncDatabase(true);
+    // Reload active order modal with updated balance values
+    if (orderId && typeof window.openOrderModal === "function") {
+      window.openOrderModal(orderId);
+    }
+  } catch (err) {
+    showToast(`فشل حذف الدفعة: ${err.message}`, "error");
+  } finally {
+    hideLoader();
+  }
+};
 

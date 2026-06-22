@@ -138,6 +138,12 @@ function doPost(e) {
       case "savePayment":
         result = handleSavePayment(payload);
         break;
+      case "deletePayment":
+        result = handleDeletePayment(payload);
+        break;
+      case "deleteOrder":
+        result = handleDeleteOrder(payload);
+        break;
       case "saveExpense":
         result = handleSaveExpense(payload);
         break;
@@ -450,7 +456,10 @@ function handleSavePayment(payment) {
   const paymentId = payment["Payment ID"] || "PAY-" + Math.floor(100000 + Math.random() * 900000);
   payment["Payment ID"] = paymentId;
   payment["Date"] = payment["Date"] || new Date().toISOString().split('T')[0];
-  payment["Amount"] = parseFloat(payment["Amount"]) || 0;
+  
+  const amount = parseFloat(payment["Amount"]) || 0;
+  if (amount <= 0) throw new Error("قيمة دفعة السداد يجب أن تكون أكبر من الصفر");
+  payment["Amount"] = amount;
   
   // Save Payment row
   const payHeaders = SHEETS_SCHEMA["Payments"];
@@ -474,7 +483,7 @@ function handleSavePayment(payment) {
         const orderRowIndex = i + 2;
         const currentPaid = parseFloat(orderValues[i][paidCol]) || 0;
         const totalCost = parseFloat(orderValues[i][totalCol]) || 0;
-        const newPaid = currentPaid + payment["Amount"];
+        const newPaid = currentPaid + amount;
         const newRem = Math.max(0, totalCost - newPaid);
         
         orderSheet.getRange(orderRowIndex, paidCol + 1).setValue(newPaid);
@@ -495,7 +504,10 @@ function handleSaveExpense(expense) {
   
   expense["Expense ID"] = expense["Expense ID"] || "EXP-" + Math.floor(100000 + Math.random() * 900000);
   expense["Date"] = expense["Date"] || new Date().toISOString().split('T')[0];
-  expense["Amount"] = parseFloat(expense["Amount"]) || 0;
+  
+  const amount = parseFloat(expense["Amount"]) || 0;
+  if (amount <= 0) throw new Error("قيمة المصروف يجب أن تكون أكبر من الصفر");
+  expense["Amount"] = amount;
   
   const rowData = mapObjectToRow(expense, headers);
   sheet.appendRow(rowData);
@@ -615,6 +627,170 @@ function handleUpdateSettings(settingsList) {
   });
   
   return { updated: settingsList.length };
+}
+
+// Delete Payment and update Order balances
+function handleDeletePayment(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const paySheet = ss.getSheetByName("Payments");
+  const orderSheet = ss.getSheetByName("Orders");
+  const paymentId = payload.paymentId;
+  
+  if (!paymentId) throw new Error("Payment ID is required");
+  
+  const lastRow = paySheet.getLastRow();
+  let foundRow = -1;
+  let orderId = "";
+  let amount = 0;
+  
+  if (lastRow > 1) {
+    const payValues = paySheet.getRange(2, 1, lastRow - 1, SHEETS_SCHEMA["Payments"].length).getValues();
+    for (let i = 0; i < payValues.length; i++) {
+      if (payValues[i][0] === paymentId) {
+        foundRow = i + 2;
+        orderId = payValues[i][1];
+        amount = parseFloat(payValues[i][2]) || 0;
+        break;
+      }
+    }
+  }
+  
+  if (foundRow === -1) throw new Error("Payment record not found");
+  
+  // Delete the row
+  paySheet.deleteRow(foundRow);
+  
+  // Recalculate order paid amount
+  if (orderId) {
+    const orderHeaders = SHEETS_SCHEMA["Orders"];
+    const orderLastRow = orderSheet.getLastRow();
+    if (orderLastRow > 1) {
+      const orderValues = orderSheet.getRange(2, 1, orderLastRow - 1, orderHeaders.length).getValues();
+      const orderIdCol = orderHeaders.indexOf("Order ID");
+      const paidCol = orderHeaders.indexOf("Paid Amount");
+      const remCol = orderHeaders.indexOf("Remaining Amount");
+      const totalCol = orderHeaders.indexOf("Total Cost");
+      
+      for (let i = 0; i < orderValues.length; i++) {
+        if (orderValues[i][orderIdCol] === orderId) {
+          const orderRowIndex = i + 2;
+          const currentPaid = parseFloat(orderValues[i][paidCol]) || 0;
+          const totalCost = parseFloat(orderValues[i][totalCol]) || 0;
+          const newPaid = Math.max(0, currentPaid - amount);
+          const newRem = Math.max(0, totalCost - newPaid);
+          
+          orderSheet.getRange(orderRowIndex, paidCol + 1).setValue(newPaid);
+          orderSheet.getRange(orderRowIndex, remCol + 1).setValue(newRem);
+          break;
+        }
+      }
+    }
+  }
+  
+  return { success: true, paymentId };
+}
+
+// Delete Order and perform cascade deletions + stock restoration
+function handleDeleteOrder(payload) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const orderSheet = ss.getSheetByName("Orders");
+  const roomSheet = ss.getSheetByName("Rooms");
+  const matSheet = ss.getSheetByName("OrderMaterials");
+  const prodSheet = ss.getSheetByName("InventoryItems");
+  
+  const orderId = payload.orderId;
+  if (!orderId) throw new Error("Order ID is required");
+  
+  // 1. Locate the Order
+  const orderHeaders = SHEETS_SCHEMA["Orders"];
+  const lastOrderRow = orderSheet.getLastRow();
+  let foundRow = -1;
+  let orderStatus = "";
+  
+  if (lastOrderRow > 1) {
+    const orderValues = orderSheet.getRange(2, 1, lastOrderRow - 1, orderHeaders.length).getValues();
+    const orderIdCol = orderHeaders.indexOf("Order ID");
+    const statusCol = orderHeaders.indexOf("Order Status");
+    for (let i = 0; i < orderValues.length; i++) {
+      if (orderValues[i][orderIdCol] === orderId) {
+        foundRow = i + 2;
+        orderStatus = orderValues[i][statusCol];
+        break;
+      }
+    }
+  }
+  
+  if (foundRow === -1) throw new Error("Order record not found");
+  
+  // 2. If it is NOT a quotation, restore stock
+  if (orderStatus !== "Quotation") {
+    const matsLastRow = matSheet.getLastRow();
+    if (matsLastRow > 1) {
+      const matsValues = matSheet.getRange(2, 1, matsLastRow - 1, SHEETS_SCHEMA["OrderMaterials"].length).getValues();
+      const prodHeaders = SHEETS_SCHEMA["InventoryItems"];
+      const prodLastRow = prodSheet.getLastRow();
+      const prodValues = prodLastRow > 1 ? prodSheet.getRange(2, 1, prodLastRow - 1, prodHeaders.length).getValues() : [];
+      const prodIdCol = prodHeaders.indexOf("Item ID");
+      const prodQtyCol = prodHeaders.indexOf("Quantity Available");
+      
+      for (let i = 0; i < matsValues.length; i++) {
+        const rowOrderId = matsValues[i][1];
+        const itemId = matsValues[i][2];
+        const qtyUsed = parseFloat(matsValues[i][3]) || 0;
+        
+        if (rowOrderId === orderId) {
+          // Find item and add qty back
+          for (let j = 0; j < prodValues.length; j++) {
+            if (prodValues[j][prodIdCol] === itemId) {
+              const currentQty = parseFloat(prodValues[j][prodQtyCol]) || 0;
+              prodSheet.getRange(j + 2, prodQtyCol + 1).setValue(currentQty + qtyUsed);
+              prodValues[j][prodQtyCol] = currentQty + qtyUsed;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // 3. Delete associated materials rows
+  const matsLastRow = matSheet.getLastRow();
+  if (matsLastRow > 1) {
+    const matsValues = matSheet.getRange(2, 1, matsLastRow - 1, SHEETS_SCHEMA["OrderMaterials"].length).getValues();
+    for (let i = matsValues.length - 1; i >= 0; i--) {
+      if (matsValues[i][1] === orderId) {
+        matSheet.deleteRow(i + 2);
+      }
+    }
+  }
+  
+  // 4. Delete associated rooms rows
+  const roomsLastRow = roomSheet.getLastRow();
+  if (roomsLastRow > 1) {
+    const roomsValues = roomSheet.getRange(2, 1, roomsLastRow - 1, SHEETS_SCHEMA["Rooms"].length).getValues();
+    for (let i = roomsValues.length - 1; i >= 0; i--) {
+      if (roomsValues[i][1] === orderId) {
+        roomSheet.deleteRow(i + 2);
+      }
+    }
+  }
+  
+  // 5. Delete associated payments rows
+  const paySheet = ss.getSheetByName("Payments");
+  const payLastRow = paySheet.getLastRow();
+  if (payLastRow > 1) {
+    const payValues = paySheet.getRange(2, 1, payLastRow - 1, SHEETS_SCHEMA["Payments"].length).getValues();
+    for (let i = payValues.length - 1; i >= 0; i--) {
+      if (payValues[i][1] === orderId) {
+        paySheet.deleteRow(i + 2);
+      }
+    }
+  }
+  
+  // 6. Finally, delete the Order row
+  orderSheet.deleteRow(foundRow);
+  
+  return { success: true, orderId };
 }
 
 // Danger Zone: Clear database tables with security confirmation

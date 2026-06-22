@@ -337,6 +337,14 @@ class ApiService {
     return this.postAction("savePayment", payment);
   }
 
+  async deletePayment(paymentId) {
+    return this.postAction("deletePayment", { paymentId });
+  }
+
+  async deleteOrder(orderId) {
+    return this.postAction("deleteOrder", { orderId });
+  }
+
   async saveExpense(expense) {
     return this.postAction("saveExpense", expense);
   }
@@ -374,6 +382,12 @@ class ApiService {
             break;
           case "savePayment":
             this.mockSavePayment(payload);
+            break;
+          case "deletePayment":
+            this.mockDeletePayment(payload);
+            break;
+          case "deleteOrder":
+            this.mockDeleteOrder(payload);
             break;
           case "saveExpense":
             this.mockSaveExpense(payload);
@@ -514,6 +528,59 @@ class ApiService {
       this.db.Orders[oIdx]["Paid Amount"] = newPaid;
       this.db.Orders[oIdx]["Remaining Amount"] = Math.max(0, total - newPaid);
     }
+  }
+
+  mockDeletePayment({ paymentId }) {
+    const idx = this.db.Payments.findIndex(p => p["Payment ID"] === paymentId);
+    if (idx === -1) return;
+    
+    const payment = this.db.Payments[idx];
+    const orderId = payment["Order ID"];
+    const amount = payment["Amount"];
+    
+    this.db.Payments.splice(idx, 1);
+    
+    // Update order amounts
+    const oIdx = this.db.Orders.findIndex(o => o["Order ID"] === orderId);
+    if (oIdx !== -1) {
+      const curPaid = parseFloat(this.db.Orders[oIdx]["Paid Amount"]) || 0;
+      const total = parseFloat(this.db.Orders[oIdx]["Total Cost"]) || 0;
+      const newPaid = Math.max(0, curPaid - amount);
+      this.db.Orders[oIdx]["Paid Amount"] = newPaid;
+      this.db.Orders[oIdx]["Remaining Amount"] = Math.max(0, total - newPaid);
+    }
+  }
+
+  mockDeleteOrder({ orderId }) {
+    const oIdx = this.db.Orders.findIndex(o => o["Order ID"] === orderId);
+    if (oIdx === -1) return;
+    
+    const order = this.db.Orders[oIdx];
+    const status = order["Order Status"];
+    
+    // 1. If not quotation, restore inventory
+    if (status !== "Quotation") {
+      const mats = this.db.OrderMaterials.filter(m => m["Order ID"] === orderId);
+      mats.forEach(m => {
+        const pIdx = this.db.InventoryItems.findIndex(p => p["Item ID"] === m["Item ID"]);
+        if (pIdx !== -1) {
+          const cur = parseFloat(this.db.InventoryItems[pIdx]["Quantity Available"]) || 0;
+          this.db.InventoryItems[pIdx]["Quantity Available"] = cur + (parseFloat(m["Quantity Used"]) || 0);
+        }
+      });
+    }
+    
+    // 2. Cascade delete OrderMaterials
+    this.db.OrderMaterials = this.db.OrderMaterials.filter(m => m["Order ID"] !== orderId);
+    
+    // 3. Cascade delete Rooms
+    this.db.Rooms = this.db.Rooms.filter(r => r["Order ID"] !== orderId);
+    
+    // 4. Cascade delete Payments
+    this.db.Payments = this.db.Payments.filter(p => p["Order ID"] !== orderId);
+    
+    // 5. Delete order row
+    this.db.Orders.splice(oIdx, 1);
   }
 
   mockSaveExpense(expense) {

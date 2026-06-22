@@ -26,6 +26,7 @@ window.appState = {
   }
 };
 
+window.settingsUnlocked = false;
 let autoLogoutTimer;
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -87,15 +88,23 @@ function initRouter() {
     }
     
     // Lock settings page with a different secure password in both Admin & Demo sessions
-    if (hash === "settings") {
-      const settingsPass = prompt("الرجاء إدخال كلمة مرور الإعدادات الخاصة للنظام:");
-      const correctSettingsPass = "ElmasaSettingsSecure2026!!";
-      if (settingsPass !== correctSettingsPass) {
-        showToast("كلمة مرور الإعدادات خاطئة! غير مسموح بالدخول.", "error");
-        const prevRoute = window.appState.currentRoute && window.appState.currentRoute !== "settings" ? window.appState.currentRoute : "dashboard";
-        window.location.hash = "#" + prevRoute;
-        return;
+    if (hash === "settings" && !window.settingsUnlocked) {
+      // Revert hash for a moment
+      const prevRoute = window.appState.currentRoute && window.appState.currentRoute !== "settings" ? window.appState.currentRoute : "dashboard";
+      window.location.hash = "#" + prevRoute;
+      
+      // Open settings password modal
+      const modal = document.getElementById("settings-password-modal");
+      if (modal) {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        const input = document.getElementById("settings-pass-input");
+        if (input) {
+          input.value = "";
+          input.focus();
+        }
       }
+      return;
     }
     
     window.appState.currentRoute = hash;
@@ -330,6 +339,40 @@ function initGlobalEvents() {
       }
     });
   }
+
+  // Settings Password Modal Events
+  const settingsModal = document.getElementById("settings-password-modal");
+  const settingsForm = document.getElementById("settings-password-form");
+  const settingsClose = document.getElementById("settings-pass-close");
+  const settingsCancel = document.getElementById("settings-pass-cancel-btn");
+
+  const closeSettingsModal = () => {
+    if (settingsModal) {
+      settingsModal.classList.add("hidden");
+      settingsModal.classList.remove("flex");
+    }
+  };
+
+  if (settingsForm) {
+    settingsForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const input = document.getElementById("settings-pass-input");
+      const password = input ? input.value : "";
+      const correctSettingsPass = "ElmasaSettingsSecure2026!!";
+      
+      if (password === correctSettingsPass) {
+        window.settingsUnlocked = true;
+        closeSettingsModal();
+        showToast("تم التحقق من كلمة مرور الإعدادات بنجاح", "success");
+        window.location.hash = "#settings";
+      } else {
+        showToast("كلمة مرور الإعدادات خاطئة! غير مسموح بالدخول.", "error");
+      }
+    });
+  }
+
+  settingsClose?.addEventListener("click", closeSettingsModal);
+  settingsCancel?.addEventListener("click", closeSettingsModal);
 
   // Register Sync UI updater
   api.registerSyncListener((freshDb) => {
@@ -703,7 +746,9 @@ window.formatCurrency = function(value) {
 };
 
 window.generateId = function(prefix) {
-  return `${prefix}-${Math.floor(10000 + Math.random() * 90000)}`;
+  const ts = Date.now().toString().slice(-6);
+  const rand = Math.floor(1000 + Math.random() * 9000);
+  return `${prefix}-${ts}${rand}`;
 };
 
 async function sha256(message) {
